@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 //Importamos la aplicación/credenciales
 import firebaseApp from "./firebase/credenciales";
 import Home from "./screens/Home";
@@ -31,16 +31,12 @@ function App() {
   }
 
   //funcion para obtener el rol del usuario desde Firestore
-  async function setUserWithFirebase(usuarioFirebase) {
-    const datosFirestore = await getDatosUsuario(
-      usuarioFirebase.uid
-    );
+  const setUserWithFirebase = useCallback(async (usuarioFirebase) => {
+    const datosFirestore = await getDatosUsuario(usuarioFirebase.uid);
 
     const userData = {
       uid: usuarioFirebase.uid,
       email: usuarioFirebase.email,
-
-      // datos Firestore
       nombre: datosFirestore?.nombre || "",
       rol: datosFirestore?.rol || "",
       provider: datosFirestore?.provider || "",
@@ -55,36 +51,23 @@ function App() {
     setUser(userData);
 
     console.log("Usuario completo:", userData);
-  }
 
-  onAuthStateChanged(auth, (usuarioFirebase) => {
-    if (usuarioFirebase) {
-
-      if (!user) {
-        setUserWithFirebase(usuarioFirebase);
-      }
-
-    } else {
-      setUser(null);
-    }
-  });
+  }, []);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (usuarioFirebase) => {
+    const unsubscribe = onAuthStateChanged(auth, async (usuarioFirebase) => {
 
       if (usuarioFirebase) {
-        if (!user) {
-          setUserWithFirebase(usuarioFirebase);
-        }
+        await setUserWithFirebase(usuarioFirebase);
       } else {
         setUser(null);
       }
 
     });
 
-    return unsubscribe;
+    return () => unsubscribe();
 
-  }, [user]);
+  }, [setUserWithFirebase]);
 
   return (
     <>

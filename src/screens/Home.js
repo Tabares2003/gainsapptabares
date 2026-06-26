@@ -1,5 +1,5 @@
 import React from 'react'
-import firebaseApp from '../firebase/credenciales';
+//import firebaseApp from '../firebase/credenciales';
 //import { getAuth } from "firebase/auth";
 
 import AdminView from '../components/adminView';
