@@ -19,6 +19,9 @@ import {
 import { Snackbar } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert"
 
+
+
+
 const auth = getAuth(firebaseApp);
 const googleProvider = new GoogleAuthProvider();
 
@@ -232,28 +235,18 @@ function Login() {
     return (
         <div className="login-container">
 
-            <Snackbar
-                open={open}
-                autoHideDuration={5000}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                }}
-            >
-                <Alert
-                    onClose={handleClose}
-                    severity={snackbar.severity}
-                    variant="filled"
-                    sx={{ width: "100%" }}
-                >
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
-
 
             <div className="form">
                 <form onSubmit={submitHandler} className="form-container">
+
+                    <div className="logo-container-login">
+                        <img
+                            src="/logoapp2.png"
+                            alt="Logo"
+                            className="logoapp"
+                        />
+                    </div>
+
                     <div className="flex-column">
                         <label>Correo Electrónico</label>
                     </div>
@@ -411,7 +404,24 @@ function Login() {
             </div>
 
 
-
+            <Snackbar
+                open={open}
+                autoHideDuration={5000}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                }}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity={snackbar.severity}
+                    variant="filled"
+                    sx={{ width: "100%" }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
 
         </div>
     )
