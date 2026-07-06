@@ -24,13 +24,6 @@
   overflow-x: hidden;
 }
 
-@media (max-width: 800px) {
-  .form {
-    width: 78%;
-    border: 2px solid #2d79f3;
-  }
-}
-
 /* Tablets y celulares */
 @media (max-width: 800px) {
   .form-register {
@@ -57,6 +50,66 @@
 .form-register button {
   align-self: flex-end;
 }
+
+
+/*form register login*/
+
+/* From Uiverse.io by mahiatlinux */ 
+.form-register-login {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #1f1f1f;
+  padding: 30px;
+  padding-left: 40px;
+  width: 450px;
+  border-radius: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+  /* Nuevas propiedades */
+  max-height: 700px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Tablets y celulares */
+@media (max-width: 800px) {
+  .form-register-login {
+    width: 78%;
+    border: 2px solid #2d79f3;
+  }
+}
+
+.form-register-login::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-register-login::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.form-register-login::-webkit-scrollbar-thumb {
+    background: transparent;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+}
+
+.form-register-login button {
+  align-self: flex-end;
+}
+
+
+
+@media (max-width: 800px) {
+  .form {
+    width: 78%;
+    border: 2px solid #2d79f3;
+  }
+}
+
+
 
 
 /* From Uiverse.io by mahiatlinux */ 
