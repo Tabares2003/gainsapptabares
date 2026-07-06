@@ -24,6 +24,14 @@
   overflow-x: hidden;
 }
 
+/* Tablets y celulares */
+@media (max-width: 800px) {
+  .form-register {
+    width: 78%;
+    border: 2px solid #2d79f3;
+  }
+}
+
 .form-register::-webkit-scrollbar {
     width: 8px;
 }
@@ -255,12 +263,23 @@
 }
 
 .itemTipoTrabajo img {
-    width: 80px;
-    height: 80px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
     object-fit: cover; /* o contain si son logos */
     border: 2px solid transparent;
     transition: .2s;
+}
+
+@media (max-width: 380px) {
+    .itemTipoTrabajo img {
+        width: 63px;
+        height: 63px;
+    }
+
+    .nombreTipoTrabajo {
+        font-size: 12px;
+    }
 }
 
 .itemTipoTrabajo:hover img {

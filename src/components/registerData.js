@@ -15,7 +15,9 @@ import {
     MenuItem,
 } from "@material-ui/core";
 
-
+const capitalizarPalabras = (texto) => {
+    return texto?.replace(/\b\w/g, (letra) => letra?.toUpperCase());
+};
 
 const formatearPlaca = (valor) => {
     if (!valor) return "";
@@ -341,7 +343,7 @@ function RegisterData({ user }) {
 
                                 {[1, 2, 3, 4, 5, 6, 7].map((dia) => (
                                     <MenuItem key={dia} value={dia}>
-                                        {dia}
+                                        {capitalizarPalabras(String(dia))}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -395,7 +397,7 @@ function RegisterData({ user }) {
                                         key={tipo.id}
                                         value={tipo.id}
                                     >
-                                        {tipo.tipoveh}
+                                        {capitalizarPalabras(tipo.tipoveh)}
                                     </MenuItem>
                                 ))}
                             </Select>
@@ -464,7 +466,7 @@ function RegisterData({ user }) {
                                     />
 
                                     <span className="nombrePlataforma">
-                                        {plataforma.plataforma}
+                                        {capitalizarPalabras(plataforma.plataforma)}
                                     </span>
 
                                 </div>
