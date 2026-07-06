@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import "../screens/Login.css";
 
 import firebaseApp from "../firebase/credenciales";
-import { getFirestore, doc, updateDoc } from "firebase/firestore";
+import {
+    getFirestore, collection,
+    getDocs,
+} from "firebase/firestore";
 
 import FormControl from "@material-ui/core/FormControl";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
@@ -12,12 +15,7 @@ import {
     MenuItem,
 } from "@material-ui/core";
 
-import {
-    collection,
-    getDocs,
-} from "firebase/firestore";
 
- 
 
 const formatearPlaca = (valor) => {
     if (!valor) return "";
