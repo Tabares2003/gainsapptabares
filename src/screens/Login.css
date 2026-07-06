@@ -234,3 +234,47 @@
   color: #f1f1f1;
   font-weight: 400;
 }
+
+
+
+
+
+.contenedorTiposTrabajo {
+    display: flex; 
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.itemTipoTrabajo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.itemTipoTrabajo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover; /* o contain si son logos */
+    border: 2px solid transparent;
+    transition: .2s;
+}
+
+.itemTipoTrabajo:hover img {
+    transform: scale(1.08);
+}
+
+.itemTipoTrabajo.seleccionado img {
+    filter: brightness(.45);
+    border-color: #4FC3F7;
+}
+
+.nombreTipoTrabajo {
+    margin-top: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}

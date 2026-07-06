@@ -77,6 +77,25 @@ function RegisterData({ user }) {
     const [placavehiculo, setPlacaVehiculo] = useState(user.placavehiculo || "");
     const [tipovehiculo, setTipoVehiculo] = useState(user.tipovehiculo || "");
     const [diaslaborales, setDiasLaborales] = useState(user.diaslaborales || "");
+    const [tipotrabajo, setTipoTrabajo] = useState(user.tipotrabajo || "");
+
+    const tiposTrabajo = [
+        {
+            id: 1,
+            imagen: "1.png",
+            nombre: "Conductor",
+        },
+        {
+            id: 2,
+            imagen: "2.png",
+            nombre: "Repartidor",
+        },
+        {
+            id: 3,
+            imagen: "3.png",
+            nombre: "Ambos",
+        },
+    ];
 
     const metaNumerica = Number(meta) || 0;
     const dias = Number(diaslaborales) || 0;
@@ -112,18 +131,26 @@ function RegisterData({ user }) {
 
         try {
 
+            const datosActualizar = {
+                nombre,
+                meta,
+                placavehiculo,
+                tipovehiculo,
+                tipotrabajo: Number(tipotrabajo),
+                diaslaborales: Number(diaslaborales),
+            };
+
+            console.log("Datos a enviar:", datosActualizar);
+
+            // Por ahora no enviamos nada a Firestore
+            return;
+
             const docRef = doc(
                 firestore,
                 `usuarios/${user.uid}`
             );
 
-            await updateDoc(docRef, {
-                nombre,
-                meta,
-                placavehiculo,
-                tipovehiculo,
-                diaslaborales: Number(diaslaborales),
-            });
+            await updateDoc(docRef, datosActualizar);
 
             alert("Datos actualizados correctamente");
 
@@ -223,7 +250,6 @@ function RegisterData({ user }) {
                             onChange={handleMetaChange}
                             inputProps={{
                                 inputMode: "numeric",
-                                pattern: "[0-9]*",
                                 maxLength: 13,
                             }}
                         />
@@ -318,10 +344,30 @@ function RegisterData({ user }) {
                         </div>
                     )}
 
-                     <div className="formInputNormal">
+                    <div className="formInputNormal">
                         <h3>Tipo de trabajo</h3>
 
-                         
+                        <div className="contenedorTiposTrabajo">
+                            {tiposTrabajo.map((tipo) => (
+                                <div
+                                    key={tipo.id}
+                                    className={`itemTipoTrabajo ${Number(tipotrabajo) === tipo.id ? "seleccionado" : ""
+                                        }`}
+                                    onClick={() => setTipoTrabajo(tipo.id)}
+                                >
+                                    <img
+                                        src={`/tipotrabajosimg/${tipo.imagen}`}
+                                        alt={tipo.nombre}
+                                    />
+
+                                    <span className="nombreTipoTrabajo">
+                                        {tipo.nombre}
+                                    </span>
+
+                                </div>
+                            ))}
+                        </div>
+
                     </div>
 
 
