@@ -140,6 +140,8 @@ function RegisterData({ user }) {
             // Por ahora no enviamos nada a Firestore
             return;
 
+            /**¿ 
+
             const docRef = doc(
                 firestore,
                 `usuarios/${user.uid}`
@@ -147,7 +149,7 @@ function RegisterData({ user }) {
 
             await updateDoc(docRef, datosActualizar);
 
-            alert("Datos actualizados correctamente");
+            alert("Datos actualizados correctamente");*/
 
         } catch (error) {
             console.error(error);
