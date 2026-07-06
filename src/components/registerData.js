@@ -17,12 +17,7 @@ import {
     getDocs,
 } from "firebase/firestore";
 
-
-const formatearNumero = (valor) => {
-    if (!valor) return "";
-
-    return valor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
+ 
 
 const formatearPlaca = (valor) => {
     if (!valor) return "";
