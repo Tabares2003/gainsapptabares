@@ -19,7 +19,7 @@
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 
   /* Nuevas propiedades */
-  max-height: 600px;
+  max-height: 500px;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -227,6 +227,7 @@
   flex-direction: column;
   gap: 10px;
   font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  margin-bottom: 20px;
 }
 
 .formInputNormal h3{
@@ -277,4 +278,80 @@
     font-size: 14px;
     font-weight: 600;
     text-align: center;
+}
+
+
+/* ============================= */
+/*        PLATAFORMAS            */
+/* ============================= */
+
+.contenedorPlataformas {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px 12px;
+    scroll-behavior: smooth;
+
+    scrollbar-width: thin;
+    scrollbar-color: #4FC3F7 transparent;
+
+    scroll-snap-type: x mandatory;
+}
+
+.contenedorPlataformas::-webkit-scrollbar {
+    height: 6px;
+}
+
+.contenedorPlataformas::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.contenedorPlataformas::-webkit-scrollbar-thumb {
+    background: #4FC3F7;
+    border-radius: 20px;
+}
+
+.contenedorPlataformas::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.itemPlataforma {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: .25s;
+    scroll-snap-align: start;
+}
+
+.itemPlataforma img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent;
+    transition: .25s;
+}
+
+.itemPlataforma:hover img {
+    transform: scale(1.08);
+}
+
+.itemPlataforma.seleccionado img {
+    filter: brightness(.45);
+    border-color: #4FC3F7;
+}
+
+.nombrePlataforma {
+    margin-top: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
 }

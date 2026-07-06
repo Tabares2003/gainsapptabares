@@ -90,6 +90,7 @@ function Login() {
                     vehiculoseleccionado: "",
                     genero: "",
                     diaslaborales: "",
+                    plataformasuser: []
                 });
             }
         } catch (error) {
@@ -125,6 +126,7 @@ function Login() {
             vehiculoseleccionado: "",
             genero: "",
             diaslaborales: "",
+            plataformasuser: []
         });
     }
 

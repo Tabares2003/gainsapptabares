@@ -62,7 +62,7 @@ const useStyles = makeStyles({
 function RegisterData({ user }) {
 
     const [tiposVehiculo, setTiposVehiculo] = useState([]);
-
+    const [plataformasDB, setPlataformasDB] = useState([]);
 
 
     const [nombre, setNombre] = useState(user.nombre || "");
@@ -71,6 +71,35 @@ function RegisterData({ user }) {
     const [tipovehiculo, setTipoVehiculo] = useState(user.tipovehiculo || "");
     const [diaslaborales, setDiasLaborales] = useState(user.diaslaborales || "");
     const [tipotrabajo, setTipoTrabajo] = useState(user.tipotrabajo || "");
+
+    const [plataformas, setPlataformas] = useState(user.plataformasuser || []);
+
+    const plataformasMostrar = plataformasDB.filter((p) => {
+
+        // Si eligió "Ambos", mostrar todas
+        if (Number(tipotrabajo) === 3) {
+            return true;
+        }
+
+        // Conductor
+        if (Number(tipotrabajo) === 1) {
+            return (
+                p.tipoplataforma === "conductor" ||
+                p.tipoplataforma === "ambos"
+            );
+        }
+
+        // Repartidor
+        if (Number(tipotrabajo) === 2) {
+            return (
+                p.tipoplataforma === "repartidor" ||
+                p.tipoplataforma === "ambos"
+            );
+        }
+
+        return false;
+
+    });
 
     const tiposTrabajo = [
         {
@@ -131,6 +160,7 @@ function RegisterData({ user }) {
                 tipovehiculo,
                 tipotrabajo: Number(tipotrabajo),
                 diaslaborales: Number(diaslaborales),
+                plataformasuser: plataformas
             };
 
             console.log("Datos a enviar:", datosActualizar);
@@ -208,7 +238,52 @@ function RegisterData({ user }) {
 
     }, []);
 
+    useEffect(() => {
+
+        const obtenerPlataformas = async () => {
+
+            const querySnapshot = await getDocs(
+                collection(firestore, "plataformas")
+            );
+
+            const plataformas = querySnapshot.docs.map((doc) => ({
+                id: Number(doc.id), // <-- el id viene del documento
+                plataforma: doc.data().plataforma,
+                tipoplataforma: doc.data().tipoplataforma,
+            }));
+
+            plataformas.sort((a, b) => a.id - b.id);
+
+            setPlataformasDB(plataformas);
+        };
+
+        obtenerPlataformas();
+
+    }, []);
+
+    const togglePlataforma = (id) => {
+
+        if (plataformas?.includes(id)) {
+
+            setPlataformas(
+                plataformas?.filter(item => item !== id)
+            );
+
+        } else {
+
+            setPlataformas([
+                ...plataformas,
+                id
+            ]);
+
+        }
+
+    };
+
+
     console.log("tipovehiculo:", tipovehiculo, typeof tipovehiculo);
+
+    console.log("plataformas:", plataformasDB, typeof plataformasDB);
 
     return (
         <div className="login-container">
@@ -348,7 +423,10 @@ function RegisterData({ user }) {
                                     key={tipo.id}
                                     className={`itemTipoTrabajo ${Number(tipotrabajo) === tipo.id ? "seleccionado" : ""
                                         }`}
-                                    onClick={() => setTipoTrabajo(tipo.id)}
+                                    onClick={() => {
+                                        setTipoTrabajo(tipo.id);
+                                        setPlataformas([]);
+                                    }}
                                 >
                                     <img
                                         src={`/tipotrabajosimg/${tipo.imagen}`}
@@ -365,6 +443,36 @@ function RegisterData({ user }) {
 
                     </div>
 
+                    <div className="formInputNormal">
+                        <h3>Que plataformas usas?</h3>
+                        <div className="contenedorPlataformas">
+
+                            {plataformasMostrar.map((plataforma) => (
+
+                                <div
+                                    key={plataforma.id}
+                                    className={`itemPlataforma ${plataformas.includes(plataforma.id)
+                                        ? "seleccionado"
+                                        : ""
+                                        }`}
+                                    onClick={() => togglePlataforma(plataforma.id)}
+                                >
+
+                                    <img
+                                        src={`/plataformas/${plataforma.id}.png`}
+                                        alt={plataforma.plataforma}
+                                    />
+
+                                    <span className="nombrePlataforma">
+                                        {plataforma.plataforma}
+                                    </span>
+
+                                </div>
+
+                            ))}
+
+                        </div>
+                    </div>
 
                     <button
                         className="button-submit"
