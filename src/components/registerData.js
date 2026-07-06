@@ -65,7 +65,7 @@ function RegisterData({ user }) {
 
     const [tiposVehiculo, setTiposVehiculo] = useState([]);
     const [plataformasDB, setPlataformasDB] = useState([]);
-
+    const [vehiculos, setVehiculos] = useState([]);
 
     const [nombre, setNombre] = useState(user.nombre || "");
     const [meta, setMeta] = useState(user.meta || "");
@@ -73,6 +73,15 @@ function RegisterData({ user }) {
     const [tipovehiculo, setTipoVehiculo] = useState(user.tipovehiculo || "");
     const [diaslaborales, setDiasLaborales] = useState(user.diaslaborales || "");
     const [tipotrabajo, setTipoTrabajo] = useState(user.tipotrabajo || "");
+
+    const [vehiculoseleccionado, setVehiculoSeleccionado] = useState(
+        user.vehiculoseleccionado || ""
+    );
+
+    const vehiculosMostrar = vehiculos.filter(
+        (vehiculo) =>
+            Number(vehiculo.tipovehiculo) === Number(tipovehiculo)
+    );
 
     const [plataformas, setPlataformas] = useState(user.plataformasuser || []);
 
@@ -162,7 +171,8 @@ function RegisterData({ user }) {
                 tipovehiculo,
                 tipotrabajo: Number(tipotrabajo),
                 diaslaborales: Number(diaslaborales),
-                plataformasuser: plataformas
+                plataformasuser: plataformas,
+                vehiculoseleccionado: Number(vehiculoseleccionado),
             };
 
             console.log("Datos a enviar:", datosActualizar);
@@ -282,6 +292,31 @@ function RegisterData({ user }) {
 
     };
 
+    useEffect(() => {
+
+        const obtenerVehiculos = async () => {
+
+            const querySnapshot = await getDocs(
+                collection(firestore, "vehiculos")
+            );
+
+            const datos = querySnapshot.docs.map((doc) => ({
+                id: Number(doc.id),
+                ...doc.data(),
+            }));
+
+            datos.sort((a, b) => a.id - b.id);
+
+            setVehiculos(datos);
+
+        };
+
+        obtenerVehiculos();
+
+    }, []);
+
+    console.log("vehiculoseleccionado:", vehiculos);
+
 
     console.log("tipovehiculo:", tipovehiculo, typeof tipovehiculo);
 
@@ -381,6 +416,10 @@ function RegisterData({ user }) {
 
                                     setTipoVehiculo(valor);
 
+                                    // Limpiar el vehículo seleccionado
+                                    setVehiculoSeleccionado("");
+
+                                    // Si no requiere placa, limpiar la placa
                                     if (!["1", "2"].includes(String(valor))) {
                                         setPlacaVehiculo("");
                                     }
@@ -445,36 +484,77 @@ function RegisterData({ user }) {
 
                     </div>
 
-                    <div className="formInputNormal">
-                        <h3>Que plataformas usas?</h3>
-                        <div className="contenedorPlataformas">
+                    {tipotrabajo && (
+                        <div className="formInputNormal">
+                            <h3>¿Qué plataformas usas?</h3>
 
-                            {plataformasMostrar.map((plataforma) => (
+                            <div className="contenedorPlataformas">
+
+                                {plataformasMostrar.map((plataforma) => (
+
+                                    <div
+                                        key={plataforma.id}
+                                        className={`itemPlataforma ${plataformas.includes(plataforma.id)
+                                            ? "seleccionado"
+                                            : ""
+                                            }`}
+                                        onClick={() => togglePlataforma(plataforma.id)}
+                                    >
+
+                                        <img
+                                            src={`/plataformas/${plataforma.id}.png`}
+                                            alt={plataforma.plataforma}
+                                        />
+
+                                        <span className="nombrePlataforma">
+                                            {capitalizarPalabras(plataforma.plataforma)}
+                                        </span>
+
+                                    </div>
+
+                                ))}
+
+                            </div>
+                        </div>
+                    )}
+
+
+                    <div className="formInputNormal">
+                        <h3>Elije tu vehículo</h3>
+                        <div className="contenedorVehiculos">
+
+                            {vehiculosMostrar?.map((vehiculo) => (
 
                                 <div
-                                    key={plataforma.id}
-                                    className={`itemPlataforma ${plataformas.includes(plataforma.id)
+                                    key={vehiculo?.id}
+                                    className={`itemVehiculo ${Number(vehiculoseleccionado) === vehiculo?.id
                                         ? "seleccionado"
                                         : ""
                                         }`}
-                                    onClick={() => togglePlataforma(plataforma.id)}
+                                    onClick={() =>
+                                        setVehiculoSeleccionado(vehiculo?.id)
+                                    }
                                 >
 
                                     <img
-                                        src={`/plataformas/${plataforma.id}.png`}
-                                        alt={plataforma.plataforma}
+                                        src={`/vehiculos/${vehiculo?.id}.png`}
+                                        alt={vehiculo?.nombrevehiculo}
                                     />
 
-                                    <span className="nombrePlataforma">
-                                        {capitalizarPalabras(plataforma.plataforma)}
+                                    <span className="nombreVehiculo">
+                                        {capitalizarPalabras(vehiculo?.nombrevehiculo)}
+                                    </span>
+
+                                    <span className="marcaVehiculo">
+                                        {capitalizarPalabras(vehiculo?.marca)}
                                     </span>
 
                                 </div>
 
                             ))}
-
                         </div>
                     </div>
+
 
                     <button
                         className="button-submit"

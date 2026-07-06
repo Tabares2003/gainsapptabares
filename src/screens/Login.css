@@ -374,3 +374,108 @@
     text-align: center;
     white-space: nowrap;
 }
+
+
+
+/* ============================= */
+/*         VEHÍCULOS             */
+/* ============================= */
+
+.contenedorVehiculos {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 4px 12px;
+    scroll-behavior: smooth;
+
+    scrollbar-width: thin;
+    scrollbar-color: #4FC3F7 transparent;
+
+    scroll-snap-type: x mandatory;
+}
+
+.contenedorVehiculos::-webkit-scrollbar {
+    height: 6px;
+}
+
+.contenedorVehiculos::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.contenedorVehiculos::-webkit-scrollbar-thumb {
+    background: #4FC3F7;
+    border-radius: 20px;
+}
+
+.contenedorVehiculos::-webkit-scrollbar-button {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.itemVehiculo {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: .25s;
+    scroll-snap-align: start;
+}
+
+.itemVehiculo img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid transparent;
+    transition: .25s;
+}
+
+.itemVehiculo:hover img {
+    transform: scale(1.08);
+}
+
+.itemVehiculo.seleccionado img {
+    filter: brightness(.45);
+    border-color: #4FC3F7;
+}
+
+.nombreVehiculo {
+    margin-top: 8px;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    white-space: nowrap;
+}
+
+
+.marcaVehiculo {
+    margin-top: 3px;
+    color: #9E9E9E;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    width: 95px;
+    line-height: 1.2;
+}
+
+@media (max-width: 380px) {
+
+    .itemVehiculo img {
+        width: 75px;
+        height: 75px;
+    }
+
+    .nombreVehiculo {
+        font-size: 12px;
+    }
+
+    .marcaVehiculo {
+        font-size: 11px;
+    }
+
+}
