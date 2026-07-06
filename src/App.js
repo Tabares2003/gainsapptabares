@@ -40,10 +40,9 @@ function App() {
       nombre: datosFirestore?.nombre || "",
       rol: datosFirestore?.rol || "",
       provider: datosFirestore?.provider || "",
-      fechaCreacion: datosFirestore?.fechaCreacion || "",
-      fechaNacimiento: datosFirestore?.fechaNacimiento || "",
+      fechaCreacion: datosFirestore?.fechaCreacion || "", 
       meta: datosFirestore?.meta || "",
-      picoyplaca: datosFirestore?.picoyplaca || "",
+      placavehiculo: datosFirestore?.placavehiculo || "",
       tipovehiculo: datosFirestore?.tipovehiculo || "",
       foto: datosFirestore?.foto || ""
     };

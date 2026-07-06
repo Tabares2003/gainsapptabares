@@ -82,15 +82,14 @@ function Login() {
                     foto: usuario.photoURL || "",
                     rol: "user",
                     provider: "google",
-                    fechaCreacion: obtenerFechaActual(),
-                    fechaNacimiento: "",
-                    meta: "",
-                    picoyplaca: "",
+                    fechaCreacion: obtenerFechaActual(), 
+                    meta: "", 
                     tipovehiculo: "",
                     tipotrabajo: "",
                     placavehiculo: "",
                     vehiculoseleccionado: "",
-                    genero: ""
+                    genero: "",
+                    diaslaborales: "",
                 });
             }
         } catch (error) {
@@ -118,15 +117,14 @@ function Login() {
             foto: "",
             rol,
             provider: "correo",
-            fechaCreacion: obtenerFechaActual(),
-            fechaNacimiento: "",
-            meta: "",
-            picoyplaca: "",
+            fechaCreacion: obtenerFechaActual(), 
+            meta: "", 
             tipovehiculo: "",
             tipotrabajo: "",
             placavehiculo: "",
             vehiculoseleccionado: "",
-            genero: ""
+            genero: "",
+            diaslaborales: "",
         });
     }
 
@@ -243,7 +241,7 @@ function Login() {
                         <img
                             src="/logoapp2.png"
                             alt="Logo"
-                            className="logoapp"
+                            className="logoapp" 
                         />
                     </div>
 

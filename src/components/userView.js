@@ -12,10 +12,7 @@ function userView({ user }) {
     console.log("Usuario en userView:", user);
 
     return (
-        <div>
-
-            <h2>Hola {user.nombre}</h2>
-
+        <div>  
             {!user.meta ? (
                 <RegisterData user={user} />
             ) : (
