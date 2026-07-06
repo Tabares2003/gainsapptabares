@@ -5,6 +5,7 @@ import firebaseApp from "../firebase/credenciales";
 import {
     getFirestore, collection,
     getDocs,
+    doc, updateDoc
 } from "firebase/firestore";
 
 import FormControl from "@material-ui/core/FormControl";
@@ -14,6 +15,9 @@ import {
     Select,
     MenuItem,
 } from "@material-ui/core";
+
+import { Snackbar } from "@material-ui/core";
+import Alert from "@material-ui/lab/Alert"
 
 const capitalizarPalabras = (texto) => {
     return texto?.replace(/\b\w/g, (letra) => letra?.toUpperCase());
@@ -62,6 +66,28 @@ const useStyles = makeStyles({
 });
 
 function RegisterData({ user }) {
+
+    const [open, setOpen] = useState(false);
+
+    const [snackbar, setSnackbar] = useState({
+        message: "",
+        severity: "success",
+    });
+
+    const notify = (message, severity = "success") => {
+        setSnackbar({
+            message,
+            severity,
+        });
+
+        setOpen(true);
+    };
+
+    const handleClose = (_, reason) => {
+        if (reason === "clickaway") return;
+        setOpen(false);
+    };
+
 
     const [tiposVehiculo, setTiposVehiculo] = useState([]);
     const [plataformasDB, setPlataformasDB] = useState([]);
@@ -159,8 +185,116 @@ function RegisterData({ user }) {
         setPlacaVehiculo(limpio);
     };
 
+    const validarFormulario = () => {
+
+        if (!nombre.trim()) {
+
+            notify(
+                "Debes ingresar un nombre o apodo.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        if (!meta || Number(meta) < 30000) {
+
+            notify(
+                "La meta semanal debe ser de al menos $30.000.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        if (!diaslaborales) {
+
+            notify(
+                "Debes seleccionar los días laborales por semana.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        // Si es carro o moto, la placa es obligatoria
+        if (
+            ["1", "2"].includes(String(tipovehiculo)) &&
+            placavehiculo.trim().length < 5
+        ) {
+
+            notify(
+                "Debes ingresar una placa válida.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        if (!tipotrabajo) {
+
+            notify(
+                "Debes seleccionar tu tipo de trabajo.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        if (plataformas.length === 0) {
+
+            notify(
+                "Debes seleccionar al menos una plataforma.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        if (!tipovehiculo) {
+
+            notify(
+                "Debes seleccionar el tipo de vehículo.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        if (!vehiculoseleccionado) {
+
+            notify(
+                "Debes seleccionar tu vehículo.",
+                "warning"
+            );
+
+            return false;
+        }
+
+        if (
+            [1, 3].includes(Number(tipotrabajo)) &&
+            ![1, 2].includes(Number(tipovehiculo))
+        ) {
+
+            notify(
+                "Si trabajas como conductor o ambos, debes seleccionar un carro o una moto.",
+                "warning"
+            );
+
+            return false;
+        }
+
+
+        return true;
+    };
+
     async function guardarDatos(e) {
         e.preventDefault();
+
+        // Validar antes de continuar
+        if (!validarFormulario()) {
+            return;
+        }
 
         try {
 
@@ -175,12 +309,7 @@ function RegisterData({ user }) {
                 vehiculoseleccionado: Number(vehiculoseleccionado),
             };
 
-            console.log("Datos a enviar:", datosActualizar);
-
-            // Por ahora no enviamos nada a Firestore
-            return;
-
-            /**¿ 
+            console.log("Datos a enviar:", datosActualizar);  
 
             const docRef = doc(
                 firestore,
@@ -189,7 +318,12 @@ function RegisterData({ user }) {
 
             await updateDoc(docRef, datosActualizar);
 
-            alert("Datos actualizados correctamente");*/
+            alert("Datos actualizados correctamente");
+            
+             notify(
+                "Datos enviados correctamente",
+                "success"
+            ); 
 
         } catch (error) {
             console.error(error);
@@ -519,41 +653,45 @@ function RegisterData({ user }) {
                     )}
 
 
-                    <div className="formInputNormal">
-                        <h3>Elije tu vehículo</h3>
-                        <div className="contenedorVehiculos">
+                    {tipovehiculo && (
+                        <div className="formInputNormal">
+                            <h3>Elije tu vehículo</h3>
 
-                            {vehiculosMostrar?.map((vehiculo) => (
+                            <div className="contenedorVehiculos">
 
-                                <div
-                                    key={vehiculo?.id}
-                                    className={`itemVehiculo ${Number(vehiculoseleccionado) === vehiculo?.id
-                                        ? "seleccionado"
-                                        : ""
-                                        }`}
-                                    onClick={() =>
-                                        setVehiculoSeleccionado(vehiculo?.id)
-                                    }
-                                >
+                                {vehiculosMostrar?.map((vehiculo) => (
 
-                                    <img
-                                        src={`/vehiculos/${vehiculo?.id}.png`}
-                                        alt={vehiculo?.nombrevehiculo}
-                                    />
+                                    <div
+                                        key={vehiculo.id}
+                                        className={`itemVehiculo ${Number(vehiculoseleccionado) === vehiculo.id
+                                            ? "seleccionado"
+                                            : ""
+                                            }`}
+                                        onClick={() =>
+                                            setVehiculoSeleccionado(vehiculo.id)
+                                        }
+                                    >
 
-                                    <span className="nombreVehiculo">
-                                        {capitalizarPalabras(vehiculo?.nombrevehiculo)}
-                                    </span>
+                                        <img
+                                            src={`/vehiculos/${vehiculo.id}.png`}
+                                            alt={vehiculo.nombrevehiculo}
+                                        />
 
-                                    <span className="marcaVehiculo">
-                                        {capitalizarPalabras(vehiculo?.marca)}
-                                    </span>
+                                        <span className="nombreVehiculo">
+                                            {capitalizarPalabras(vehiculo.nombrevehiculo)}
+                                        </span>
 
-                                </div>
+                                        <span className="marcaVehiculo">
+                                            {capitalizarPalabras(vehiculo.marca)}
+                                        </span>
 
-                            ))}
+                                    </div>
+
+                                ))}
+
+                            </div>
                         </div>
-                    </div>
+                    )}
 
 
                     <button
@@ -570,7 +708,24 @@ function RegisterData({ user }) {
 
 
 
-
+            <Snackbar
+                open={open}
+                autoHideDuration={5000}
+                onClose={handleClose}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                }}
+            >
+                <Alert
+                    onClose={handleClose}
+                    severity={snackbar.severity}
+                    variant="filled"
+                    sx={{ width: "100%" }}
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
 
         </div>
     );
