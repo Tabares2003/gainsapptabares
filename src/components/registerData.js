@@ -309,7 +309,7 @@ function RegisterData({ user }) {
                 vehiculoseleccionado: Number(vehiculoseleccionado),
             };
 
-            console.log("Datos a enviar:", datosActualizar);  
+            console.log("Datos a enviar:", datosActualizar);
 
             const docRef = doc(
                 firestore,
@@ -318,12 +318,15 @@ function RegisterData({ user }) {
 
             await updateDoc(docRef, datosActualizar);
 
-            alert("Datos actualizados correctamente");
-            
-             notify(
+            notify(
                 "Datos enviados correctamente",
                 "success"
-            ); 
+            );
+
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
 
         } catch (error) {
             console.error(error);
