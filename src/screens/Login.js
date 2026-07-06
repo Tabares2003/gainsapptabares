@@ -78,8 +78,7 @@ function Login() {
             if (!docSnap.exists()) {
                 await setDoc(docuRef, {
                     email: usuario.email,
-                    nombre: usuario.displayName || "",
-                    foto: usuario.photoURL || "",
+                    nombre: usuario.displayName || "", 
                     rol: "user",
                     provider: "google",
                     fechaCreacion: obtenerFechaActual(), 
@@ -87,8 +86,7 @@ function Login() {
                     tipovehiculo: "",
                     tipotrabajo: "",
                     placavehiculo: "",
-                    vehiculoseleccionado: "",
-                    genero: "",
+                    vehiculoseleccionado: "", 
                     diaslaborales: "",
                     plataformasuser: []
                 });
@@ -114,8 +112,7 @@ function Login() {
 
         await setDoc(docuRef, {
             nombre,
-            email,
-            foto: "",
+            email, 
             rol,
             provider: "correo",
             fechaCreacion: obtenerFechaActual(), 
@@ -123,8 +120,7 @@ function Login() {
             tipovehiculo: "",
             tipotrabajo: "",
             placavehiculo: "",
-            vehiculoseleccionado: "",
-            genero: "",
+            vehiculoseleccionado: "", 
             diaslaborales: "",
             plataformasuser: []
         });
