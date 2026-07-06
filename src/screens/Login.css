@@ -24,6 +24,13 @@
   overflow-x: hidden;
 }
 
+@media (max-width: 800px) {
+  .form {
+    width: 78%;
+    border: 2px solid #2d79f3;
+  }
+}
+
 /* Tablets y celulares */
 @media (max-width: 800px) {
   .form-register {
@@ -65,7 +72,7 @@
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 
   /* Nuevas propiedades */
-  max-height: 600px;
+  max-height: 500px;
   overflow-y: auto;
   overflow-x: hidden;
 }

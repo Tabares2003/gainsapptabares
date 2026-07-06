@@ -232,7 +232,7 @@ function Login() {
         <div className="login-container">
 
 
-            <div className="form">
+            <div className="form-register">
                 <form onSubmit={submitHandler} className="form-container">
 
                     <div className="logo-container-login">
