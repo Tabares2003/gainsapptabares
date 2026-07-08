@@ -538,16 +538,7 @@
         font-size: 11px;
     }
 
-}
-
-.user-view-container{
-  background-color: pink;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
+} 
 
  
  
