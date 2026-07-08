@@ -1,11 +1,11 @@
-.login-container{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 
-/* From Uiverse.io by mahiatlinux */ 
+/* From Uiverse.io by mahiatlinux */
 .form-register {
   display: flex;
   flex-direction: column;
@@ -33,18 +33,18 @@
 }
 
 .form-register::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .form-register::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .form-register::-webkit-scrollbar-thumb {
-    background: transparent;
-    border: 2px solid transparent;
-    background-clip: content-box;
-    border-radius: 999px;
+  background: transparent;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
 }
 
 .form-register button {
@@ -54,7 +54,7 @@
 
 /*form register login*/
 
-/* From Uiverse.io by mahiatlinux */ 
+/* From Uiverse.io by mahiatlinux */
 .form-register-login {
   display: flex;
   flex-direction: column;
@@ -82,18 +82,18 @@
 }
 
 .form-register-login::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .form-register-login::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .form-register-login::-webkit-scrollbar-thumb {
-    background: transparent;
-    border: 2px solid transparent;
-    background-clip: content-box;
-    border-radius: 999px;
+  background: transparent;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
 }
 
 .form-register-login button {
@@ -112,13 +112,13 @@
 
 
 
-/* From Uiverse.io by mahiatlinux */ 
+/* From Uiverse.io by mahiatlinux */
 .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
   background-color: #1f1f1f;
-  padding: 30px; 
+  padding: 30px;
   width: 450px;
   border-radius: 20px;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
@@ -131,18 +131,18 @@
 }
 
 .form::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .form::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .form::-webkit-scrollbar-thumb {
-    background: transparent;
-    border: 2px solid transparent;
-    background-clip: content-box;
-    border-radius: 999px;
+  background: transparent;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
 }
 
 .form button {
@@ -152,7 +152,7 @@
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;  
+  gap: 10px;
   width: 100%;
 }
 
@@ -164,7 +164,7 @@
 
 
 
-.flex-column > label {
+.flex-column>label {
   color: #f1f1f1;
   font-weight: 600;
 }
@@ -206,7 +206,7 @@
   justify-content: space-between;
 }
 
-.flex-row > div > label {
+.flex-row>div>label {
   font-size: 14px;
   color: #f1f1f1;
   font-weight: 400;
@@ -261,21 +261,21 @@
   border: 1px solid #2d79f3;
 }
 
-.logo-container-login{
+.logo-container-login {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.logoapp{
+.logoapp {
   width: 170px;
   height: 170px;
   margin-bottom: 10px;
   background-color: transparent;
 }
 
-.form-header-title{
+.form-header-title {
   width: 100%;
   justify-content: center;
   display: flex;
@@ -284,21 +284,21 @@
   margin-bottom: 20px;
 }
 
-.form-header-title h1{
+.form-header-title h1 {
   font-size: 20px;
   font-weight: 600;
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
-.formInputNormal{
+.formInputNormal {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
   margin-bottom: 20px;
 }
 
-.formInputNormal h3{
+.formInputNormal h3 {
   font-size: 14px;
   color: #f1f1f1;
   font-weight: 400;
@@ -309,54 +309,55 @@
 
 
 .contenedorTiposTrabajo {
-    display: flex; 
-    gap: 20px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .itemTipoTrabajo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    transition: .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: .2s;
 }
 
 .itemTipoTrabajo img {
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    object-fit: cover; /* o contain si son logos */
-    border: 2px solid transparent;
-    transition: .2s;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  /* o contain si son logos */
+  border: 2px solid transparent;
+  transition: .2s;
 }
 
 @media (max-width: 380px) {
-    .itemTipoTrabajo img {
-        width: 63px;
-        height: 63px;
-    }
+  .itemTipoTrabajo img {
+    width: 63px;
+    height: 63px;
+  }
 
-    .nombreTipoTrabajo {
-        font-size: 12px;
-    }
+  .nombreTipoTrabajo {
+    font-size: 12px;
+  }
 }
 
 .itemTipoTrabajo:hover img {
-    transform: scale(1.08);
+  transform: scale(1.08);
 }
 
 .itemTipoTrabajo.seleccionado img {
-    filter: brightness(.45);
-    border-color: #4FC3F7;
+  filter: brightness(.45);
+  border-color: #4FC3F7;
 }
 
 .nombreTipoTrabajo {
-    margin-top: 8px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
+  margin-top: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
 }
 
 
@@ -365,74 +366,74 @@
 /* ============================= */
 
 .contenedorPlataformas {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 18px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 8px 4px 12px;
-    scroll-behavior: smooth;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 18px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 4px 12px;
+  scroll-behavior: smooth;
 
-    scrollbar-width: thin;
-    scrollbar-color: #4FC3F7 transparent;
+  scrollbar-width: thin;
+  scrollbar-color: #4FC3F7 transparent;
 
-    scroll-snap-type: x mandatory;
+  scroll-snap-type: x mandatory;
 }
 
 .contenedorPlataformas::-webkit-scrollbar {
-    height: 6px;
+  height: 6px;
 }
 
 .contenedorPlataformas::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .contenedorPlataformas::-webkit-scrollbar-thumb {
-    background: #4FC3F7;
-    border-radius: 20px;
+  background: #4FC3F7;
+  border-radius: 20px;
 }
 
 .contenedorPlataformas::-webkit-scrollbar-button {
-    display: none;
-    width: 0;
-    height: 0;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .itemPlataforma {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    transition: .25s;
-    scroll-snap-align: start;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: .25s;
+  scroll-snap-align: start;
 }
 
 .itemPlataforma img {
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid transparent;
-    transition: .25s;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: .25s;
 }
 
 .itemPlataforma:hover img {
-    transform: scale(1.08);
+  transform: scale(1.08);
 }
 
 .itemPlataforma.seleccionado img {
-    filter: brightness(.45);
-    border-color: #4FC3F7;
+  filter: brightness(.45);
+  border-color: #4FC3F7;
 }
 
 .nombrePlataforma {
-    margin-top: 8px;
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
+  margin-top: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
 }
 
 
@@ -442,109 +443,125 @@
 /* ============================= */
 
 .contenedorVehiculos {
-    display: flex;
-    flex-wrap: nowrap;
-    gap: 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 8px 4px 12px;
-    scroll-behavior: smooth;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 8px 4px 12px;
+  scroll-behavior: smooth;
 
-    scrollbar-width: thin;
-    scrollbar-color: #4FC3F7 transparent;
+  scrollbar-width: thin;
+  scrollbar-color: #4FC3F7 transparent;
 
-    scroll-snap-type: x mandatory;
+  scroll-snap-type: x mandatory;
 }
 
 .contenedorVehiculos::-webkit-scrollbar {
-    height: 6px;
+  height: 6px;
 }
 
 .contenedorVehiculos::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .contenedorVehiculos::-webkit-scrollbar-thumb {
-    background: #4FC3F7;
-    border-radius: 20px;
+  background: #4FC3F7;
+  border-radius: 20px;
 }
 
 .contenedorVehiculos::-webkit-scrollbar-button {
-    display: none;
-    width: 0;
-    height: 0;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 .itemVehiculo {
-    flex: 0 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
-    transition: .25s;
-    scroll-snap-align: start;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: .25s;
+  scroll-snap-align: start;
 }
 
 .itemVehiculo img {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid transparent;
-    transition: .25s;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid transparent;
+  transition: .25s;
 }
 
 .itemVehiculo:hover img {
-    transform: scale(1.08);
+  transform: scale(1.08);
 }
 
 .itemVehiculo.seleccionado img {
-    filter: brightness(.45);
-    border-color: #4FC3F7;
+  filter: brightness(.45);
+  border-color: #4FC3F7;
 }
 
 .nombreVehiculo {
-    margin-top: 8px;
-    color: white;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
+  margin-top: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
 }
 
 
 .marcaVehiculo {
-    margin-top: 3px;
-    color: #9E9E9E;
-    font-size: 12px;
-    font-weight: 500;
-    text-align: center;
-    width: 95px;
-    line-height: 1.2;
+  margin-top: 3px;
+  color: #9E9E9E;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  width: 95px;
+  line-height: 1.2;
 }
 
 @media (max-width: 380px) {
 
-    .itemVehiculo img {
-        width: 75px;
-        height: 75px;
-    }
+  .itemVehiculo img {
+    width: 75px;
+    height: 75px;
+  }
 
-    .nombreVehiculo {
-        font-size: 12px;
-    }
+  .nombreVehiculo {
+    font-size: 12px;
+  }
 
-    .marcaVehiculo {
-        font-size: 11px;
-    }
+  .marcaVehiculo {
+    font-size: 11px;
+  }
 
-} 
+}
 
- 
- 
+.react-calendar__tile {
+  min-height: 70px !important;
+  height: 70px !important;
+  min-width: 87px;
+}
+
+.react-calendar__month-view__days__day {
+  min-height: 100px;
+}
+
+.react-calendar__tile,
+.react-calendar__month-view__days__day {
+  min-height: 63px !important;
+  height: 63px !important;
+}
+
+
 
 .react-calendar {
-  width: 480px;
+  width: 450px;
+  max-width: 100%;
   background: #1f1f1f;
   color: white;
   border-radius: 20px;
@@ -580,7 +597,4 @@
   color: #BDBDBD;
   font-size: 11px;
 }
-
-.contenidoDia{
-  background-color: orange; 
-}
+ 

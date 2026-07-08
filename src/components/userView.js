@@ -68,7 +68,7 @@ function userView({ user }) {
                                     </div>
 
                                     <div className="plataformaDia">
-                                        {ingreso.plataforma}
+                                        N = 23.000
                                     </div>
                                 </div>
                             );
