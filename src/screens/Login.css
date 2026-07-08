@@ -549,19 +549,8 @@
   flex-direction: column;
 }
 
-.home-container{
-  background-color: green;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-form{
-  width: 100vw;
-  background-color: red;
-}
-
+ 
+ 
 
 .react-calendar {
   width: 480px;
