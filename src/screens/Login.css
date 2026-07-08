@@ -539,3 +539,69 @@
     }
 
 }
+
+.user-view-container{
+  background-color: pink;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.home-container{
+  background-color: green;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form{
+  width: 100vw;
+  background-color: red;
+}
+
+
+.react-calendar {
+  width: 480px;
+  background: #1f1f1f;
+  color: white;
+  border-radius: 20px;
+  border: none;
+  padding: 20px;
+}
+
+.react-calendar__tile {
+  height: 95px;
+  position: relative;
+  border-radius: 10px;
+}
+
+.react-calendar__tile:hover {
+  background: #2d2d2d;
+}
+
+.react-calendar__tile--active {
+  background: #2d79f3 !important;
+}
+
+.contenidoDia {
+  margin-top: 8px;
+}
+
+.ingresoDia {
+  color: #4FC3F7;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.plataformaDia {
+  color: #BDBDBD;
+  font-size: 11px;
+}
+
+.contenidoDia{
+  background-color: orange;
+  width: 99px;
+}

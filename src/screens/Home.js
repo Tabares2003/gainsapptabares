@@ -13,7 +13,7 @@ function Home({ user }) {
     console.log("Usuario en Home:", user);
 
     return (
-        <div>
+        <div className="home-container">
             {user.rol === "admin" ? <AdminView user={user}/> : <UserView user={user}/>} 
             {/*  <button onClick={() => signOut(auth)}>Cerrar Sesión</button>*/}
         </div>
