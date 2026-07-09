@@ -44,7 +44,8 @@ function App() {
       meta: datosFirestore?.meta || "",
       placavehiculo: datosFirestore?.placavehiculo || "",
       tipovehiculo: datosFirestore?.tipovehiculo || "",
-      foto: datosFirestore?.foto || ""
+      foto: datosFirestore?.foto || "",
+      vehiculoseleccionado: datosFirestore?.vehiculoseleccionado || "",
     };
 
     setUser(userData);
