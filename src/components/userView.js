@@ -190,6 +190,98 @@ function UserView({ user }) {
 
                         )
                     }
+                     {
+                        !mostrarTodoMes ? (
+
+                            <div className="semanaActual">
+
+                                {diasSemana.map((dia) => {
+
+                                    const fecha = formatearFecha(dia);
+
+                                    const ingresosDia =
+                                        ingresos[fecha] || [];
+
+                                    const totalDia =
+                                        ingresosDia.reduce(
+                                            (acc, item) =>
+                                                acc + item.total,
+                                            0
+                                        );
+
+                                    return (
+                                        <div
+                                            key={fecha}
+                                            className={`diaSemana ${formatearFecha(new Date()) === fecha
+                                                    ? "diaActual"
+                                                    : ""
+                                                }`}
+                                        >
+                                            <div className="numeroDia">
+                                                {dia.getDate()}
+                                            </div>
+
+                                            {ingresosDia.length > 0 && (
+                                                <>
+                                                    <div className="ingresoSemana">
+                                                        $
+                                                        {formatearNumero(totalDia)}
+                                                    </div>
+
+                                                    <div className="plataformaSemana">
+                                                        {
+                                                            ingresosDia
+                                                                .map(
+                                                                    x =>
+                                                                        x.plataforma
+                                                                )
+                                                                .join(", ")
+                                                        }
+                                                    </div>
+                                                </>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+
+                            </div>
+
+                        ) : (
+
+                            <Calendar
+                                tileContent={({ date, view }) => {
+                                    if (view !== "month")
+                                        return null;
+
+                                    const fecha =
+                                        formatearFecha(date);
+
+                                    const ingresosDia =
+                                        ingresos[fecha] || [];
+
+                                    const totalDia =
+                                        ingresosDia.reduce(
+                                            (acc, item) =>
+                                                acc + item.total,
+                                            0
+                                        );
+
+                                    if (ingresosDia.length === 0)
+                                        return null;
+
+                                    return (
+                                        <div className="contenidoDia">
+                                            <div className="ingresoDia">
+                                                $
+                                                {formatearNumero(totalDia)}
+                                            </div>
+                                        </div>
+                                    );
+                                }}
+                            />
+
+                        )
+                    }
                         <div
                             className={`bottom-floating-menu ${mostrarMenu ? "menu-visible" : "menu-hidden"
                                 }`}
