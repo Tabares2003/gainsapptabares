@@ -73,17 +73,29 @@ function UserView({ user }) {
 
     const [mostrarMenu, setMostrarMenu] = useState(true);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setMostrarMenu(window.scrollY < 20);
-        };
+useEffect(() => {
+  let timeout;
 
-        window.addEventListener("scroll", handleScroll);
+  const handleScroll = () => {
+    // Oculta inmediatamente al hacer scroll
+    setMostrarMenu(false);
 
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
+    // Limpia el timeout anterior
+    clearTimeout(timeout);
+
+    // Si deja de hacer scroll por 300ms, vuelve a aparecer
+    timeout = setTimeout(() => {
+      setMostrarMenu(true);
+    }, 300);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+
+  return () => {
+    window.removeEventListener("scroll", handleScroll);
+    clearTimeout(timeout);
+  };
+}, []);
 
     return (
         <div className="user-view-container">
