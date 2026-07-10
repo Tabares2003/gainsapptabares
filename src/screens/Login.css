@@ -839,7 +839,7 @@
 
 @media (max-width: 700px) {
   .calendar-day {
-    min-height: 50px;
+    min-height: 55px;
   }
 
   .day-number {

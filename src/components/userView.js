@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import firebaseApp from '../firebase/credenciales';
 import { getAuth, signOut } from "firebase/auth";
 import RegisterData from '../components/registerData';
-import { FaRegUser } from "react-icons/fa6"; 
+import { FaRegUser } from "react-icons/fa6";
 
 import "react-calendar/dist/Calendar.css";
 
@@ -16,16 +16,99 @@ const auth = getAuth(firebaseApp);
 
 function UserView({ user }) {
 
-    const [currentMonth, setCurrentMonth] = useState(new Date());
+    const VIEW_TYPES = {
+        MONTH: "month",
+        WEEK: "week",
+        FORTNIGHT: "fortnight",
+    };
+
+    const [viewType, setViewType] = useState(
+        VIEW_TYPES.MONTH
+    );
+
+    const [currentDate, setCurrentDate] = useState(
+        new Date()
+    );
+ 
 
     const maxDate = new Date();
 
     maxDate.setMonth(maxDate.getMonth() + 1);
     maxDate.setDate(1);
+ 
 
-    const minDate = new Date(2025, 0, 1); // Enero 2025
 
+    const getWeekDays = (date) => {
+        const current = new Date(date);
 
+        let day = current.getDay();
+
+        // Si es domingo (0), lo convertimos en 7
+        if (day === 0) {
+            day = 7;
+        }
+
+        // Retroceder hasta el lunes
+        current.setDate(
+            current.getDate() - day + 1
+        );
+
+        const week = [];
+
+        for (let i = 0; i < 7; i++) {
+            week.push(
+                new Date(
+                    current.getFullYear(),
+                    current.getMonth(),
+                    current.getDate() + i
+                )
+            );
+        }
+
+        return week;
+    };
+
+    const getFortnightDays = (date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const day = date.getDate();
+
+        const days = [];
+
+        let startDay;
+        let endDay;
+
+        // Primera quincena
+        if (day <= 15) {
+            startDay = 1;
+            endDay = 15;
+        }
+        // Segunda quincena
+        else {
+            startDay = 16;
+            endDay = new Date(
+                year,
+                month + 1,
+                0
+            ).getDate();
+        }
+
+        for (
+            let d = startDay;
+            d <= endDay;
+            d++
+        ) {
+            days.push(
+                new Date(
+                    year,
+                    month,
+                    d
+                )
+            );
+        }
+
+        return days;
+    };
 
 
     const generateCalendar = (date) => {
@@ -55,32 +138,87 @@ function UserView({ user }) {
         return calendar;
     };
 
-    const days = generateCalendar(currentMonth);
+    let days = [];
+
+    if (viewType === VIEW_TYPES.MONTH) {
+        days = generateCalendar(currentDate);
+    }
+
+    if (viewType === VIEW_TYPES.WEEK) {
+        days = getWeekDays(currentDate);
+    }
+
+    if (viewType === VIEW_TYPES.FORTNIGHT) {
+        days = getFortnightDays(currentDate);
+    }
 
 
-    const nextMonth = () => {
-        const next = new Date(
-            currentMonth.getFullYear(),
-            currentMonth.getMonth() + 1,
-            1
-        );
+    const next = () => {
+        const date = new Date(currentDate);
 
-        if (next <= maxDate) {
-            setCurrentMonth(next);
+        if (viewType === VIEW_TYPES.MONTH) {
+            date.setMonth(
+                date.getMonth() + 1
+            );
         }
+
+        if (viewType === VIEW_TYPES.WEEK) {
+            date.setDate(
+                date.getDate() + 7
+            );
+        }
+
+        if (viewType === VIEW_TYPES.FORTNIGHT) {
+            if (currentDate.getDate() <= 15) {
+                date.setDate(16);
+            } else {
+                date.setMonth(
+                    date.getMonth() + 1
+                );
+                date.setDate(1);
+            }
+        }
+
+        setCurrentDate(date);
     };
 
-    const previousMonth = () => {
-        const prev = new Date(currentMonth);
+    const previous = () => {
+        const date = new Date(currentDate);
 
-        prev.setMonth(
-            prev.getMonth() - 1
-        );
-
-        if (prev >= minDate) {
-            setCurrentMonth(prev);
+        if (viewType === VIEW_TYPES.MONTH) {
+            date.setMonth(
+                date.getMonth() - 1
+            );
         }
+
+        if (viewType === VIEW_TYPES.WEEK) {
+            date.setDate(
+                date.getDate() - 7
+            );
+        }
+
+        if (viewType === VIEW_TYPES.FORTNIGHT) {
+            if (currentDate.getDate() > 15) {
+                date.setDate(1);
+            } else {
+                date.setMonth(
+                    date.getMonth() - 1
+                );
+
+                const lastDay = new Date(
+                    date.getFullYear(),
+                    date.getMonth() + 1,
+                    0
+                ).getDate();
+
+                date.setDate(16);
+            }
+        }
+
+        setCurrentDate(date);
     };
+
+
 
     const [mostrarMenu, setMostrarMenu] = useState(true);
 
@@ -106,14 +244,59 @@ function UserView({ user }) {
             window.removeEventListener("scroll", handleScroll);
             clearTimeout(timeout);
         };
-    }, []);
+    }, []);  
 
+    const getCalendarTitle = () => {
+        const months = [
+            "enero",
+            "febrero",
+            "marzo",
+            "abril",
+            "mayo",
+            "junio",
+            "julio",
+            "agosto",
+            "septiembre",
+            "octubre",
+            "noviembre",
+            "diciembre",
+        ];
 
-    console.log("vehiculo seleccionado", user?.vehiculoseleccionado);
+        if (!days.length) {
+            return "";
+        }
 
+        const firstDay = days.find(
+            day => day !== null
+        );
 
+        const lastDay = [...days]
+            .reverse()
+            .find(day => day !== null);
 
+        if (!firstDay || !lastDay) {
+            return "";
+        }
 
+        const firstMonth = firstDay.getMonth();
+        const lastMonth = lastDay.getMonth();
+
+        const firstYear = firstDay.getFullYear();
+        const lastYear = lastDay.getFullYear();
+
+        if (
+            firstMonth === lastMonth &&
+            firstYear === lastYear
+        ) {
+            return `${months[firstMonth]} de ${firstYear}`;
+        }
+
+        if (firstYear === lastYear) {
+            return `${months[firstMonth]} - ${months[lastMonth]} de ${firstYear}`;
+        }
+
+        return `${months[firstMonth]} ${firstYear} - ${months[lastMonth]} ${lastYear}`;
+    };
 
 
     return (
@@ -134,33 +317,49 @@ function UserView({ user }) {
                             }}
                         />
 
+                        <button
+                            onClick={() =>
+                                setViewType(VIEW_TYPES.WEEK)
+                            }
+                        >
+                            Mostrar semana
+                        </button>
 
+                        <button
+                            onClick={() =>
+                                setViewType(VIEW_TYPES.FORTNIGHT)
+                            }
+                        >
+                            Mostrar quincena
+                        </button>
+
+                        <button
+                            onClick={() =>
+                                setViewType(VIEW_TYPES.MONTH)
+                            }
+                        >
+                            Vista mes
+                        </button>
 
                         <div className="calendar">
 
                             <div className="calendar-header">
-                                <button onClick={previousMonth}>
+                                <button onClick={previous}>
                                     ←
                                 </button>
 
                                 <h2>
-                                    {currentMonth.toLocaleDateString(
-                                        "es-CO",
-                                        {
-                                            month: "long",
-                                            year: "numeric",
-                                        }
-                                    )}
+                                    {getCalendarTitle()}
                                 </h2>
 
-                                <button onClick={nextMonth}>
+                                <button onClick={next}>
                                     →
                                 </button>
                             </div>
 
                             <div className="calendar-grid">
 
-                                {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map(
+                                {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map(
                                     (day) => (
                                         <div
                                             key={day}
