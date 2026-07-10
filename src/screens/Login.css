@@ -557,17 +557,7 @@
   height: 63px !important;
 }
 
-
-
-.react-calendar {
-  width: 450px;
-  max-width: 100%;
-  background: #1f1f1f;
-  color: white;
-  border-radius: 20px;
-  border: none;
-  padding: 20px;
-}
+ 
 
 .react-calendar__tile {
   height: 95px;
@@ -812,4 +802,49 @@
 .notification-container{
   background-color: white;
   border-radius: 50%;
+}
+
+
+
+
+
+
+/*estilos calendario componente*/
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-weekday {
+  text-align: center;
+  padding: 15px;
+  font-weight: bold;
+}
+
+.calendar-day {
+  min-height: 120px;
+  border: 1px solid #4fc2f763;
+  position: relative;
+  background-color: white;
+}
+
+.day-number {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+@media (max-width: 700px) {
+  .calendar-day {
+    min-height: 50px;
+  }
+
+  .day-number {
+    font-size: 11px;
+    top: 4px;
+    right: 5px;
+  }
 }

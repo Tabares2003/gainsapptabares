@@ -1,78 +1,86 @@
 import React, { useEffect, useState } from "react";
 import firebaseApp from '../firebase/credenciales';
 import { getAuth, signOut } from "firebase/auth";
-import RegisterData from '../components/registerData'; 
+import RegisterData from '../components/registerData';
 import { FaRegUser } from "react-icons/fa6"; 
-import { IoMdNotificationsOutline } from "react-icons/io";
 
-//import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 import { FiHome } from "react-icons/fi";
 import { TiThMenuOutline } from "react-icons/ti";
 
+import UserInfoTop from "./homeComponents/userInfoTop";
+
 const auth = getAuth(firebaseApp);
- 
-
-//const formatearFecha = (fecha) => {
-  //  return fecha.toISOString().split("T")[0];
-//};
-
-//const formatearNumero = (numero) => {
-  //  return numero.toLocaleString("es-CO");
-//};
-
-/** Datos de ingresos
-const ingresos = {
-    "2026-07-08": [
-        {
-            total: 50000,
-            plataforma: "Uber",
-        },
-        {
-            total: 30000,
-            plataforma: "Didi",
-        },
-        {
-            total: 20000,
-            plataforma: "Rappi",
-        },
-    ],
-
-    "2026-07-09": [
-        {
-            total: 70000,
-            plataforma: "Uber",
-        },
-    ],
-};  */
 
 
 function UserView({ user }) {
 
+    const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  //  const [mostrarTodoMes, setMostrarTodoMes] = useState(false);
+    const maxDate = new Date();
 
-    console.log("Usuario en userView:", user);
+    maxDate.setMonth(maxDate.getMonth() + 1);
+    maxDate.setDate(1);
+
+    const minDate = new Date(2025, 0, 1); // Enero 2025
 
 
 
-   /// const diasSemana = [];
 
-    //const inicioSemana = new Date();
-    //const diaActual = inicioSemana.getDay();
-    //const diferencia = diaActual === 0 ? -6 : 1 - diaActual;
+    const generateCalendar = (date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
 
-    //inicioSemana.setDate(
-    //    inicioSemana.getDate() + diferencia
-    //);
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
 
-   // for (let i = 0; i < 7; i++) {
-   //     const fecha = new Date(inicioSemana);
-    //    fecha.setDate(inicioSemana.getDate() + i);
+        const daysInMonth = lastDay.getDate();
+        const startDay = firstDay.getDay();
 
-   //     diasSemana.push(fecha);
-  //  }
+        const calendar = [];
+
+        // Espacios vacíos al inicio
+        for (let i = 0; i < startDay; i++) {
+            calendar.push(null);
+        }
+
+        // Días del mes
+        for (let day = 1; day <= daysInMonth; day++) {
+            calendar.push(
+                new Date(year, month, day)
+            );
+        }
+
+        return calendar;
+    };
+
+    const days = generateCalendar(currentMonth);
+
+
+    const nextMonth = () => {
+        const next = new Date(
+            currentMonth.getFullYear(),
+            currentMonth.getMonth() + 1,
+            1
+        );
+
+        if (next <= maxDate) {
+            setCurrentMonth(next);
+        }
+    };
+
+    const previousMonth = () => {
+        const prev = new Date(currentMonth);
+
+        prev.setMonth(
+            prev.getMonth() - 1
+        );
+
+        if (prev >= minDate) {
+            setCurrentMonth(prev);
+        }
+    };
 
     const [mostrarMenu, setMostrarMenu] = useState(true);
 
@@ -102,6 +110,12 @@ function UserView({ user }) {
 
 
     console.log("vehiculo seleccionado", user?.vehiculoseleccionado);
+
+
+
+
+
+
     return (
         <div className="user-view-container">
             {!user.meta ? (
@@ -112,36 +126,65 @@ function UserView({ user }) {
 
                     <div className="user-menu-home">
 
-                        <div className="user-info-top">
-                            <div className="user-info-top-left">
-                                <img
-                                    src={`/vehiculos/${user?.vehiculoseleccionado}.png`}
-                                    alt="Vehículo del usuario"
-                                />
-                                <div>
-                                    <h5>GainsApp</h5>
-                                    <p>Hola, {user?.nombre}</p>
-                                </div>
+                        <UserInfoTop
+                            user={user}
+                            notifications={10}
+                            onNotificationsClick={() => {
+                                console.log("Abrir notificaciones");
+                            }}
+                        />
+
+
+
+                        <div className="calendar">
+
+                            <div className="calendar-header">
+                                <button onClick={previousMonth}>
+                                    ←
+                                </button>
+
+                                <h2>
+                                    {currentMonth.toLocaleDateString(
+                                        "es-CO",
+                                        {
+                                            month: "long",
+                                            year: "numeric",
+                                        }
+                                    )}
+                                </h2>
+
+                                <button onClick={nextMonth}>
+                                    →
+                                </button>
                             </div>
 
-                            <div className="user-info-top-right"> 
+                            <div className="calendar-grid">
 
-                                <div className="notification-container">
-                                    <button className="notification-button">
-                                        <IoMdNotificationsOutline />
+                                {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map(
+                                    (day) => (
+                                        <div
+                                            key={day}
+                                            className="calendar-weekday"
+                                        >
+                                            {day}
+                                        </div>
+                                    )
+                                )}
 
-                                        <span className="notification-badge">
-                                            10
-                                        </span>
-                                    </button>
-                                </div>
+                                {days.map((day, index) => (
+                                    <div
+                                        key={index}
+                                        className="calendar-day"
+                                    >
+                                        {day && (
+                                            <span className="day-number">
+                                                {day.getDate()}
+                                            </span>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
-
                         </div>
-
-
-
-
 
 
 
@@ -184,120 +227,13 @@ function UserView({ user }) {
 
 
 
-                    {/* 
-                        {
-                            !mostrarTodoMes ? (
-
-                                <div className="semanaActual">
-
-                                    {diasSemana.map((dia) => {
-
-                                        const fecha = formatearFecha(dia);
-
-                                        const ingresosDia =
-                                            ingresos[fecha] || [];
-
-                                        const totalDia =
-                                            ingresosDia.reduce(
-                                                (acc, item) =>
-                                                    acc + item.total,
-                                                0
-                                            );
-
-                                        return (
-                                            <div
-                                                key={fecha}
-                                                className={`diaSemana ${formatearFecha(new Date()) === fecha
-                                                    ? "diaActual"
-                                                    : ""
-                                                    }`}
-                                            >
-                                                <div className="numeroDia">
-                                                    {dia.getDate()}
-                                                </div>
-
-                                                {ingresosDia.length > 0 && (
-                                                    <>
-                                                        <div className="ingresoSemana">
-                                                            $
-                                                            {formatearNumero(totalDia)}
-                                                        </div>
-
-                                                        <div className="plataformaSemana">
-                                                            {
-                                                                ingresosDia
-                                                                    .map(
-                                                                        x =>
-                                                                            x.plataforma
-                                                                    )
-                                                                    .join(", ")
-                                                            }
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-
-                                </div>
-
-                            ) : (
-
-                                <Calendar
-                                    tileContent={({ date, view }) => {
-                                        if (view !== "month")
-                                            return null;
-
-                                        const fecha =
-                                            formatearFecha(date);
-
-                                        const ingresosDia =
-                                            ingresos[fecha] || [];
-
-                                        const totalDia =
-                                            ingresosDia.reduce(
-                                                (acc, item) =>
-                                                    acc + item.total,
-                                                0
-                                            );
-
-                                        if (ingresosDia.length === 0)
-                                            return null;
-
-                                        return (
-                                            <div className="contenidoDia">
-                                                <div className="ingresoDia">
-                                                    $
-                                                    {formatearNumero(totalDia)}
-                                                </div>
-                                            </div>
-                                        );
-                                    }}
-                                />
-
-                            )
-                        }*/}
 
 
 
                 </div>
             )}
 
-            {/**
-            <button
-                onClick={() =>
-                    setMostrarTodoMes(
-                        !mostrarTodoMes
-                    )
-                }
-            >
-                {
-                    mostrarTodoMes
-                        ? "Ver semana actual"
-                        : "Ver mes completo"
-                }
-            </button>
- */}
+
         </div>
 
 
