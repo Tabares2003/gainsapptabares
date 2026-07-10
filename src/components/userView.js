@@ -29,13 +29,13 @@ function UserView({ user }) {
     const [currentDate, setCurrentDate] = useState(
         new Date()
     );
- 
+
 
     const maxDate = new Date();
 
     maxDate.setMonth(maxDate.getMonth() + 1);
     maxDate.setDate(1);
- 
+
 
 
     const getWeekDays = (date) => {
@@ -186,31 +186,18 @@ function UserView({ user }) {
         const date = new Date(currentDate);
 
         if (viewType === VIEW_TYPES.MONTH) {
-            date.setMonth(
-                date.getMonth() - 1
-            );
+            date.setMonth(date.getMonth() - 1);
         }
 
         if (viewType === VIEW_TYPES.WEEK) {
-            date.setDate(
-                date.getDate() - 7
-            );
+            date.setDate(date.getDate() - 7);
         }
 
         if (viewType === VIEW_TYPES.FORTNIGHT) {
             if (currentDate.getDate() > 15) {
                 date.setDate(1);
             } else {
-                date.setMonth(
-                    date.getMonth() - 1
-                );
-
-                const lastDay = new Date(
-                    date.getFullYear(),
-                    date.getMonth() + 1,
-                    0
-                ).getDate();
-
+                date.setMonth(date.getMonth() - 1);
                 date.setDate(16);
             }
         }
@@ -244,7 +231,7 @@ function UserView({ user }) {
             window.removeEventListener("scroll", handleScroll);
             clearTimeout(timeout);
         };
-    }, []);  
+    }, []);
 
     const getCalendarTitle = () => {
         const months = [
