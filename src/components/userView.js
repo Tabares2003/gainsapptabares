@@ -8,13 +8,32 @@ import "react-calendar/dist/Calendar.css";
 
 import { FiHome } from "react-icons/fi";
 import { TiThMenuOutline } from "react-icons/ti";
-
+import { TiChevronRightOutline } from "react-icons/ti";
+import { TiChevronLeftOutline } from "react-icons/ti";
 import UserInfoTop from "./homeComponents/userInfoTop";
+import { makeStyles } from "@material-ui/core/styles";
+import FormControl from "@material-ui/core/FormControl";
+import {
+    Select,
+    MenuItem,
+} from "@material-ui/core";
 
 const auth = getAuth(firebaseApp);
 
 
 function UserView({ user }) {
+
+    const isToday = (date) => {
+        if (!date) return false;
+
+        const today = new Date();
+
+        return (
+            date.getDate() === today.getDate() &&
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear()
+        );
+    };
 
     const VIEW_TYPES = {
         MONTH: "month",
@@ -36,6 +55,32 @@ function UserView({ user }) {
     maxDate.setMonth(maxDate.getMonth() + 1);
     maxDate.setDate(1);
 
+    const useStyles = makeStyles({
+        outlinedInput: {
+            borderRadius: 10,
+            color: "#000000",
+            width: '150px',
+            fontSize: '13px',
+
+            "& input::placeholder": {
+                color: "#fff", // Color del placeholder
+                opacity: 1,    // Necesario para que no se vea transparente
+            },
+
+            "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#000000",
+            },
+
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#000000",
+            },
+
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#000000",
+                borderWidth: 2,
+            },
+        },
+    });
 
 
     const getWeekDays = (date) => {
@@ -235,19 +280,35 @@ function UserView({ user }) {
 
     const getCalendarTitle = () => {
         const months = [
-            "enero",
-            "febrero",
-            "marzo",
-            "abril",
-            "mayo",
-            "junio",
-            "julio",
-            "agosto",
-            "septiembre",
-            "octubre",
-            "noviembre",
-            "diciembre",
+            "Enero",
+            "Febrero",
+            "Marzo",
+            "Abril",
+            "Mayo",
+            "Junio",
+            "Julio",
+            "Agosto",
+            "Septiembre",
+            "Octubre",
+            "Noviembre",
+            "Diciembre",
         ];
+
+        const monthslight = [
+            "En",
+            "Feb",
+            "Mar",
+            "Abr",
+            "May",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Sept",
+            "Oct",
+            "Nov",
+            "Dic",
+        ];
+
 
         if (!days.length) {
             return "";
@@ -275,16 +336,32 @@ function UserView({ user }) {
             firstMonth === lastMonth &&
             firstYear === lastYear
         ) {
-            return `${months[firstMonth]} de ${firstYear}`;
+            return `${months[firstMonth]} ${firstYear}`;
         }
 
         if (firstYear === lastYear) {
-            return `${months[firstMonth]} - ${months[lastMonth]} de ${firstYear}`;
+            return `${monthslight[firstMonth]} - ${monthslight[lastMonth]} ${firstYear}`;
         }
 
-        return `${months[firstMonth]} ${firstYear} - ${months[lastMonth]} ${lastYear}`;
+        return `${monthslight[firstMonth]} ${firstYear} - ${monthslight[lastMonth]} ${lastYear}`;
     };
 
+    const viewOptions = [
+        {
+            value: VIEW_TYPES.MONTH,
+            label: "Vista mes",
+        },
+        {
+            value: VIEW_TYPES.WEEK,
+            label: "Mostrar semana",
+        },
+        {
+            value: VIEW_TYPES.FORTNIGHT,
+            label: "Mostrar quincena",
+        },
+    ];
+
+    const classes = useStyles();
 
     return (
         <div className="user-view-container">
@@ -304,45 +381,49 @@ function UserView({ user }) {
                             }}
                         />
 
-                        <button
-                            onClick={() =>
-                                setViewType(VIEW_TYPES.WEEK)
-                            }
-                        >
-                            Mostrar semana
-                        </button>
 
-                        <button
-                            onClick={() =>
-                                setViewType(VIEW_TYPES.FORTNIGHT)
-                            }
-                        >
-                            Mostrar quincena
-                        </button>
-
-                        <button
-                            onClick={() =>
-                                setViewType(VIEW_TYPES.MONTH)
-                            }
-                        >
-                            Vista mes
-                        </button>
 
                         <div className="calendar">
 
-                            <div className="calendar-header">
-                                <button onClick={previous}>
-                                    ←
-                                </button>
+                            <div className="calendar-title-top">
+                                <div className="calendar-header">
+                                    <button onClick={previous}>
+                                        <TiChevronLeftOutline />
+                                    </button>
 
-                                <h2>
-                                    {getCalendarTitle()}
-                                </h2>
+                                    <h2>
+                                        {getCalendarTitle()}
+                                    </h2>
 
-                                <button onClick={next}>
-                                    →
-                                </button>
+                                    <button onClick={next}>
+                                        <TiChevronRightOutline />
+                                    </button>
+                                </div>
+
+                                <FormControl
+                                    variant="outlined"
+                                    size="small"
+                                >
+                                    <Select
+                                        value={viewType}
+                                        onChange={(e) =>
+                                            setViewType(e.target.value)
+                                        }
+                                        className={classes.outlinedInput}
+                                    >
+                                        {viewOptions.map((option) => (
+                                            <MenuItem
+                                                key={option.value}
+                                                value={option.value}
+                                            >
+                                                {option.label}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             </div>
+
+
 
                             <div className="calendar-grid">
 
@@ -363,7 +444,10 @@ function UserView({ user }) {
                                         className="calendar-day"
                                     >
                                         {day && (
-                                            <span className="day-number">
+                                            <span
+                                                className={`day-number ${isToday(day) ? "today-number" : ""
+                                                    }`}
+                                            >
                                                 {day.getDate()}
                                             </span>
                                         )}

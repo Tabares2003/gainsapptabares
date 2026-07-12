@@ -557,7 +557,7 @@
   height: 63px !important;
 }
 
- 
+
 
 .react-calendar__tile {
   height: 95px;
@@ -587,54 +587,54 @@
   color: #BDBDBD;
   font-size: 11px;
 }
-  
+
 
 /*css calendario*/
 
 .semanaActual {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    gap: 12px;
-    margin-top: 20px;
-    width: 500px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  width: 500px;
 }
 
 .diaSemana {
-    min-height: 110px;
-    background: #1f1f1f;
-    border-radius: 16px;
-    padding: 12px;
-    border: 1px solid #2d79f3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    transition: .2s;
+  min-height: 110px;
+  background: #1f1f1f;
+  border-radius: 16px;
+  padding: 12px;
+  border: 1px solid #2d79f3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  transition: .2s;
 }
 
 .diaSemana:hover {
-    transform: translateY(-3px);
+  transform: translateY(-3px);
 }
 
 .numeroDia {
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .ingresoSemana {
-    color: #4FC3F7;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: center;
+  color: #4FC3F7;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .plataformaSemana {
-    color: #9E9E9E;
-    font-size: 12px;
-    margin-top: 6px;
-    text-align: center;
+  color: #9E9E9E;
+  font-size: 12px;
+  margin-top: 6px;
+  text-align: center;
 }
 
 
@@ -657,8 +657,8 @@
   }
 }
 
- 
- 
+
+
 .bottom-floating-menu button {
   width: 45px;
   height: 45px;
@@ -691,7 +691,7 @@
   backdrop-filter: blur(20px);
 
   border-radius: 20px;
-  
+
   z-index: 9999;
 
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -708,48 +708,48 @@
   pointer-events: none;
 }
 
-.user-info-top{
+.user-info-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
 }
 
-.user-info-top-left{
+.user-info-top-left {
   display: flex;
   align-items: center;
   gap: 10px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 
-.user-info-top-left img{
+.user-info-top-left img {
   width: 45px;
   height: 45px;
   border-radius: 50%;
 }
 
-.user-info-top-left h5{
+.user-info-top-left h5 {
   color: black;
   font-size: 14px;
   font-weight: 700;
 }
 
-.user-info-top-left p{
+.user-info-top-left p {
   color: black;
   font-size: 13px;
   font-weight: 600;
 }
 
-.user-info-top-left div{
+.user-info-top-left div {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 
-.user-info-top-right{
+.user-info-top-right {
   display: flex;
   align-items: center;
 
@@ -799,7 +799,7 @@
 }
 
 
-.notification-container{
+.notification-container {
   background-color: white;
   border-radius: 50%;
 }
@@ -837,7 +837,22 @@
   right: 10px;
   font-size: 14px;
   font-weight: bold;
+
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
 }
+
+.today-number {
+  background-color: #4FC3F7;
+  color: white;
+}
+
 
 @media (max-width: 700px) {
   .calendar-day {
@@ -848,9 +863,57 @@
     font-size: 9px;
     top: 4px;
     right: 5px;
+    width: 15px;
+    height: 15px;
   }
 
-  .calendar-weekday{
+  .calendar-weekday {
     font-size: 9px;
   }
+}
+
+
+
+.calendar-view-select {
+  padding: 8px 12px;
+  border: 1px solid #4FC3F7;
+  border-radius: 5px;
+  background: white;
+  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+  padding-right: 20px;
+}
+
+.calendar-title-top {
+  width: 95%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-header button {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.calendar-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: black;
+  width: 124px;
+  text-align: center;
 }
