@@ -42,7 +42,8 @@ const VIEW_TYPES = {
     MONTH: "month",
     WEEK: "week",
     FORTNIGHT: "fortnight",
-};
+}; 
+ 
 
 const formatearNumero = (valor) => {
     if (!valor) return "";
@@ -644,7 +645,31 @@ function UserView({ user }) {
         return metaSemanal;
     };
 
- 
+    const hoy = new Date();
+
+    hoy.setHours(0, 0, 0, 0);
+
+    const validDays =
+        days.filter(Boolean);
+
+    const ultimoDia =
+        validDays[
+        validDays.length - 1
+        ];
+
+    const periodoFinalizado =
+        ultimoDia < hoy;
+
+
+
+    const nombrePeriodo = {
+        [VIEW_TYPES.WEEK]: "semana",
+        [VIEW_TYPES.FORTNIGHT]:
+            "quincena",
+        [VIEW_TYPES.MONTH]: "mes",
+    };
+
+
     const metaPeriodo =
         obtenerMetaPeriodo();
 
@@ -658,7 +683,79 @@ function UserView({ user }) {
             )
             : 0;
 
+    const metaCompletada =
+        totalPeriodo >= metaPeriodo;
 
+    const dineroExtra =
+        totalPeriodo - metaPeriodo;
+
+    const dineroFaltante =
+        metaPeriodo - totalPeriodo;
+
+    const obtenerMensajeMeta = () => {
+        const periodo =
+            nombrePeriodo[viewType];
+
+        const porcentajeFaltante =
+            Math.max(
+                100 - porcentaje,
+                0
+            );
+
+        if (metaCompletada) {
+            if (dineroExtra > 0) {
+                return `¡Excelente! En este ${periodo} completaste tu meta y además generaste $${formatearNumero(
+                    dineroExtra
+                )} extra.`;
+            }
+
+            return `¡Excelente! En este ${periodo} completaste tu meta exitosamente.`;
+        }
+
+        // El período ya terminó
+        if (periodoFinalizado) {
+            return `En este ${periodo} te quedaste a ${porcentajeFaltante.toFixed(
+                0
+            )}% y $${formatearNumero(
+                dineroFaltante
+            )} de completar tu meta.`;
+        }
+
+        // El período sigue en curso
+        return `En este ${periodo} llevas ${porcentaje.toFixed(
+            0
+        )}% de tu meta y te faltan $${formatearNumero(
+            dineroFaltante
+        )} para alcanzarla.`;
+    };
+
+    const obtenerColoresBarra = () => {
+        if (metaCompletada) {
+            return {
+                progreso: "#4CAF50",
+                fondo: "#E8F5E9",
+            };
+        }
+
+        if (periodoFallido) {
+            return {
+                progreso: "#f44336",
+                fondo: "#fe96a1",
+            };
+        }
+
+        return {
+            progreso: "#2d79f3",
+            fondo: "#E3F2FD",
+        };
+    };
+
+    const periodoFallido =
+        periodoFinalizado &&
+        !metaCompletada;
+
+    const coloresBarra =
+        obtenerColoresBarra(); 
 
     return (
         <div className="user-view-container">
@@ -788,14 +885,25 @@ function UserView({ user }) {
                             </div>
 
                             <div className="meta-porcentaje">
-                                LLevas un total de {porcentaje.toFixed(0)} %completado
+                                {obtenerMensajeMeta()}
                             </div>
 
-                            <div className="meta-barra">
+                            <div
+                                className="meta-barra"
+                                style={{
+                                    backgroundColor:
+                                        coloresBarra.fondo,
+                                }}
+                            >
                                 <div
                                     className="meta-barra-progreso"
                                     style={{
-                                        width: `${porcentaje}%`,
+                                        width: `${Math.min(
+                                            porcentaje,
+                                            100
+                                        )}%`,
+                                        backgroundColor:
+                                            coloresBarra.progreso,
                                     }}
                                 />
                             </div>
@@ -883,7 +991,7 @@ function UserView({ user }) {
                     />
 
                     <TextField
-                        label="Ingreso neto"
+                        label="Ingresos totales"
                         fullWidth
                         margin="normal"
                         value={netoTotal}
