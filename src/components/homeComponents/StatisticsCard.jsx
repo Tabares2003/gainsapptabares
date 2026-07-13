@@ -335,12 +335,7 @@ function StatisticsCard({
             user?.diaslaborales || 1
         );
 
-    const dineroRestanteSemana =
-        Math.max(
-            metaSemanal -
-            totalPeriodo,
-            0
-        );
+ 
 
     let diaSemana =
         new Date().getDay();
