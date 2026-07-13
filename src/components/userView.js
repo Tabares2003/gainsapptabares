@@ -696,15 +696,11 @@ function UserView({ user }) {
 
                                                     {ingresoDia && (
                                                         <div className="calendar-income">
-                                                            <p>
-                                                                Br:
-                                                                $
-                                                                {ingresoDia.brutoTotal.toLocaleString()}
-                                                            </p>
+                                                            <h4> 
+                                                                ${ingresoDia.brutoTotal.toLocaleString()}
+                                                            </h4>
 
-                                                            <p>
-                                                                Nt:
-                                                                $
+                                                            <p> 
                                                                 {ingresoDia.netoTotal.toLocaleString()}
                                                             </p>
                                                         </div>

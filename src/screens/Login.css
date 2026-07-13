@@ -917,3 +917,25 @@
   width: 108px;
   text-align: center;
 }
+
+
+
+.calendar-income{
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  height: 100%;
+  justify-content: center;
+}
+
+.calendar-income h4{
+  color: black;
+  font-size: 14px; 
+  font-weight: 700;
+}
+
+.calendar-income p{
+  color: grey;
+  font-weight: 600;
+  font-size: 11px; 
+}
