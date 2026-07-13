@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import firebaseApp from '../firebase/credenciales';
 import { getAuth, signOut } from "firebase/auth";
 import RegisterData from '../components/registerData';
@@ -38,24 +38,72 @@ import {
 
 const auth = getAuth(firebaseApp);
 
+const VIEW_TYPES = {
+    MONTH: "month",
+    WEEK: "week",
+    FORTNIGHT: "fortnight",
+};
+
 
 function UserView({ user }) {
 
     const db = getFirestore();
 
+
+
     const [currentDate, setCurrentDate] = useState(
         new Date()
     );
 
-    const VIEW_TYPES = {
-        MONTH: "month",
-        WEEK: "week",
-        FORTNIGHT: "fortnight",
-    };
 
     const [viewType, setViewType] = useState(
         VIEW_TYPES.MONTH
     );
+
+
+    const generateCalendar = (date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+
+        const daysInMonth = lastDay.getDate();
+        const startDay = firstDay.getDay();
+
+        const calendar = [];
+
+        for (let i = 0; i < startDay; i++) {
+            calendar.push(null);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            calendar.push(
+                new Date(year, month, day)
+            );
+        }
+
+        return calendar;
+    };
+
+    const days = useMemo(() => {
+        if (viewType === VIEW_TYPES.MONTH) {
+            return generateCalendar(currentDate);
+        }
+
+        if (viewType === VIEW_TYPES.WEEK) {
+            return getWeekDays(currentDate);
+        }
+
+        if (viewType === VIEW_TYPES.FORTNIGHT) {
+            return getFortnightDays(currentDate);
+        }
+
+        return [];
+    }, [
+        currentDate,
+        viewType
+    ]);
 
     const formatearFechaFirestore = (fecha) => {
         const year = fecha.getFullYear();
@@ -74,25 +122,20 @@ function UserView({ user }) {
 
     const [ingresos, setIngresos] = useState({});
 
-    const obtenerIngresos = async () => {
+    const obtenerIngresos = useCallback(async () => {
         try {
-            const validDays =
-                days.filter(Boolean);
+            const validDays = days.filter(Boolean);
 
             if (!validDays.length) {
                 return;
             }
 
             const fechaInicio =
-                obtenerFechaId(
-                    validDays[0]
-                );
+                obtenerFechaId(validDays[0]);
 
             const fechaFin =
                 obtenerFechaId(
-                    validDays[
-                    validDays.length - 1
-                    ]
+                    validDays[validDays.length - 1]
                 );
 
             const q = query(
@@ -114,33 +157,29 @@ function UserView({ user }) {
                 )
             );
 
-            const snapshot =
-                await getDocs(q);
+            const snapshot = await getDocs(q);
 
             const datos = {};
 
             snapshot.forEach((doc) => {
-                datos[doc.id] =
-                    doc.data();
+                datos[doc.id] = doc.data();
             });
 
             setIngresos(datos);
-
         } catch (error) {
             console.log(error);
         }
-    };
+    }, [days,
+        user?.uid,
+        db]);
 
     useEffect(() => {
-        if (!user?.uid) {
-            return;
+        if (user?.uid) {
+            obtenerIngresos();
         }
-
-        obtenerIngresos();
     }, [
-        user?.uid,
-        currentDate,
-        viewType,
+        obtenerIngresos,
+        user?.uid
     ]);
 
     const obtenerFechaId = (fecha) => {
@@ -281,44 +320,10 @@ function UserView({ user }) {
     };
 
 
-    const generateCalendar = (date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
 
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
 
-        const daysInMonth = lastDay.getDate();
-        const startDay = firstDay.getDay();
 
-        const calendar = [];
 
-        for (let i = 0; i < startDay; i++) {
-            calendar.push(null);
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            calendar.push(
-                new Date(year, month, day)
-            );
-        }
-
-        return calendar;
-    };
-
-    let days = [];
-
-    if (viewType === VIEW_TYPES.MONTH) {
-        days = generateCalendar(currentDate);
-    }
-
-    if (viewType === VIEW_TYPES.WEEK) {
-        days = getWeekDays(currentDate);
-    }
-
-    if (viewType === VIEW_TYPES.FORTNIGHT) {
-        days = getFortnightDays(currentDate);
-    }
 
 
     const next = () => {
@@ -528,7 +533,7 @@ function UserView({ user }) {
         useState("");
 
 
-    
+
 
     const guardarIngresoDia = async () => {
         try {
@@ -709,7 +714,7 @@ function UserView({ user }) {
                                         </div>
                                     );
                                 })}
-                            </div> 
+                            </div>
                         </div>
 
 
