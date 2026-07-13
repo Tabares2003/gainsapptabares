@@ -3,9 +3,11 @@ import firebaseApp from '../firebase/credenciales';
 import { getAuth, signOut } from "firebase/auth";
 import RegisterData from '../components/registerData';
 import { FaRegUser } from "react-icons/fa6";
-
+import { MdSevereCold } from "react-icons/md";
+import { MdRemove } from "react-icons/md";
+import { BsFire } from "react-icons/bs";
 import "react-calendar/dist/Calendar.css";
-
+import { GiPartyPopper } from "react-icons/gi";
 import { FiHome } from "react-icons/fi";
 import { TiThMenuOutline } from "react-icons/ti";
 import { TiChevronRightOutline } from "react-icons/ti";
@@ -316,17 +318,7 @@ function UserView({ user }) {
                 borderWidth: 2,
             },
         },
-    });
-
-
-
-
-
-
-
-
-
-
+    });  
 
     const next = () => {
         const date = new Date(currentDate);
@@ -592,7 +584,136 @@ function UserView({ user }) {
         }
     };
 
+    /*recoger festivos */
 
+    const [festivos, setFestivos] =
+        useState({});
+
+    const obtenerFestivos =
+        useCallback(async () => {
+            try {
+                const snapshot =
+                    await getDocs(
+                        collection(
+                            db,
+                            "festivoscolombia"
+                        )
+                    );
+
+                const datos = {};
+
+                snapshot.forEach((doc) => {
+                    datos[doc.id] =
+                        doc.data();
+                });
+
+                setFestivos(datos);
+                console.log("Festivos obtenidos:", datos);
+            } catch (error) {
+                console.log(error);
+            }
+        }, [db]);
+
+    useEffect(() => {
+        obtenerFestivos();
+    }, [obtenerFestivos]);
+
+    const esFestivo = (fecha) => {
+        if (!fecha) {
+            return false;
+        }
+
+        const fechaId =
+            obtenerFechaId(fecha);
+
+        return !!festivos[fechaId];
+    };
+
+    /* 
+    const obtenerNombreFestivo = (
+        fecha
+    ) => {
+        if (!fecha) {
+            return "";
+
+        }
+
+        const fechaId =
+            obtenerFechaId(fecha);
+
+        return (
+            festivos[fechaId]?.nombre ||
+            ""
+        );
+    };
+*/
+
+
+    /**obtener dias de demandas alta 1, media 2, alta 3 */
+
+    const [demandaDias, setDemandaDias] =
+        useState({});
+
+    const obtenerDemandaDias =
+        useCallback(async () => {
+            try {
+                const snapshot =
+                    await getDocs(
+                        collection(
+                            db,
+                            "demandadias"
+                        )
+                    );
+
+                const datos = {};
+
+                snapshot.forEach((doc) => {
+                    datos[doc.id] =
+                        doc.data();
+                });
+
+                setDemandaDias(datos);
+                console.log("Demanda Dias obtenidos:", datos);
+            } catch (error) {
+                console.log(error);
+            }
+        }, [db]);
+
+    useEffect(() => {
+        obtenerDemandaDias();
+    }, [obtenerDemandaDias]);
+
+    const obtenerDemandaDia = (
+        fecha
+    ) => {
+        if (!fecha) {
+            return null;
+        }
+
+        const fechaId =
+            obtenerFechaId(fecha);
+
+        return (
+            demandaDias[fechaId] ||
+            null
+        );
+    };
+
+    const obtenerNivelDemanda = (fecha) => {
+        return Number(
+            obtenerDemandaDia(fecha)?.nivel || 0
+        );
+    };
+
+    const obtenerMotivoDemanda = (
+        fecha
+    ) => {
+        return (
+            obtenerDemandaDia(
+                fecha
+            )?.motivo || ""
+        );
+    };
 
     return (
         <div className="user-view-container">
@@ -687,6 +808,37 @@ function UserView({ user }) {
                                         >
                                             {day && (
                                                 <>
+                                                    {esFestivo(day) && (
+                                                        <div className="festivo-indicador">
+                                                            <GiPartyPopper />
+                                                        </div>
+                                                    )}
+
+                                                    {obtenerNivelDemanda(day) > 0 && (
+                                                        <div
+                                                            className={`demanda-indicador demanda-${obtenerNivelDemanda(
+                                                                day
+                                                            )}`}
+                                                            title={obtenerMotivoDemanda(
+                                                                day
+                                                            )}
+                                                        >
+                                                            {obtenerNivelDemanda(
+                                                                day
+                                                            ) === 1 ? (
+                                                                <MdSevereCold />
+                                                            ) : obtenerNivelDemanda(
+                                                                day
+                                                            ) === 2 ? (
+                                                                <MdRemove />
+                                                            ) : (
+                                                                <BsFire />
+                                                            )}
+                                                        </div>
+                                                    )}
+
+
+
                                                     <span
                                                         className={`day-number ${isToday(day)
                                                             ? "today-number"
@@ -713,7 +865,7 @@ function UserView({ user }) {
                                     );
                                 })}
                             </div>
-                        </div> 
+                        </div>
 
                         <StatisticsCard
                             viewType={viewType}

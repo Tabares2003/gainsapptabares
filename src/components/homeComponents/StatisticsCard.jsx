@@ -356,9 +356,7 @@ function StatisticsCard({
             1
         );
 
-    const metaDiariaActual =
-        dineroRestanteSemana /
-        diasRestantes;
+
 
     const fechaHoy =
         formatearFechaFirestore(
@@ -368,6 +366,24 @@ function StatisticsCard({
     const dineroHoy =
         ingresos[fechaHoy]
             ?.netoTotal || 0;
+
+
+    const dineroRestanteSinHoy =
+        Math.max(
+            metaSemanal -
+            (totalPeriodo - dineroHoy),
+            0
+        );
+
+    const diasRestantesSinHoy =
+        Math.max(
+            diasRestantes,
+            1
+        );
+
+    const metaDiariaActual =
+        dineroRestanteSinHoy /
+        diasRestantesSinHoy;
 
     const porcentajeDiario =
         metaDiariaActual > 0
