@@ -479,7 +479,7 @@ function UserView({ user }) {
     const viewOptions = [
         {
             value: VIEW_TYPES.MONTH,
-            label: "Vista mes",
+            label: "Mostrar mes",
         },
         {
             value: VIEW_TYPES.WEEK,
@@ -590,9 +590,9 @@ function UserView({ user }) {
         } catch (error) {
             console.log(error);
         }
-    }; 
- 
- 
+    };
+
+
 
     return (
         <div className="user-view-container">
@@ -713,12 +713,11 @@ function UserView({ user }) {
                                     );
                                 })}
                             </div>
-                        </div>
+                        </div> 
 
-
-                        <StatisticsCard 
+                        <StatisticsCard
                             viewType={viewType}
-                            days={days}   
+                            days={days}
                             ingresos={ingresos}
                             user={user}
                         />
@@ -739,30 +738,6 @@ function UserView({ user }) {
                             </button>
                         </div>
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                 </div>
             )}

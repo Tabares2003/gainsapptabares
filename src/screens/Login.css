@@ -925,7 +925,7 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .calendar-income h4 {
@@ -953,7 +953,7 @@
     font-size: 7px;
   }
 
-  .calendar-income { 
+  .calendar-income {
     padding-top: 2px;
   }
 }
@@ -961,12 +961,16 @@
 
 
 .meta-container {
-  width: 95%; 
+  width: 100%;
   margin-bottom: 20px;
-  margin: 0 auto;
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   grid-template-columns: repeat(7, 1fr);
+}
+
+.statistics-card {
+  width: 95%;
+  margin: 0 auto;
 }
 
 .meta-porcentaje {
@@ -979,7 +983,7 @@
 
 .meta-barra {
   width: 100%;
-  height: 4px; 
+  height: 4px;
   border-radius: 30px;
   overflow: hidden;
 }
@@ -999,30 +1003,74 @@
 }
 
 
-.meta-container{
+.meta-container {
   margin-top: 15px;
 }
 
-.meta-title h3{
+.meta-title h3 svg{
+  font-size: 13px;
+  margin-top: 5px;
+  color: green;
+}
+
+.meta-title h3 {
   font-size: 14px;
   font-weight: 600;
   color: black;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.meta-title{
-  margin-bottom: 10px;
+.meta-title {
+  margin-bottom: 10px; 
 }
 
-.meta-porcentaje{
+.meta-subtitle h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: black;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.meta-subtitle {
+  margin-bottom: 10px; 
+}
+
+.meta-porcentaje {
   font-size: 11px;
   font-weight: 600;
   color: black;
   text-align: start;
 }
 
-.meta-valores{
+.meta-valores {
   font-size: 11px;
   font-weight: 500;
   color: black;
   text-align: start;
+}
+
+
+
+
+.meta-title-gold h3 svg{
+  font-size: 16px;
+  margin-top: 1px;
+  color: gold;
+}
+
+.meta-title-gold h3 {
+  font-size: 12px;
+  font-weight: 600;
+  color: black;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.meta-title-gold {
+  margin-bottom: 10px; 
 }

@@ -46,6 +46,7 @@ function App() {
       tipovehiculo: datosFirestore?.tipovehiculo || "",
       foto: datosFirestore?.foto || "",
       vehiculoseleccionado: datosFirestore?.vehiculoseleccionado || "",
+      diaslaborales: datosFirestore?.diaslaborales || 0,
     };
 
     setUser(userData);

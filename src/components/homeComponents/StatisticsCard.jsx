@@ -1,6 +1,7 @@
 // components/StatisticsCard.jsx
-
+import { MdOutlineQueryStats } from "react-icons/md";
 import React, { useMemo } from "react";
+import { LiaMedalSolid } from "react-icons/lia";
 
 const formatearNumero = (valor) => {
     if (!valor) return "";
@@ -16,6 +17,20 @@ const VIEW_TYPES = {
     FORTNIGHT: "fortnight",
 };
 
+const formatearFechaFirestore = (fecha) => {
+    const year = fecha.getFullYear();
+
+    const month = String(
+        fecha.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+        fecha.getDate()
+    ).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+};
+
 function StatisticsCard({
     viewType,
     days,
@@ -23,6 +38,8 @@ function StatisticsCard({
     user,
 
 }) {
+
+
 
     const metaPeriodo = useMemo(() => {
         const metaSemanal =
@@ -174,47 +191,411 @@ function StatisticsCard({
     const coloresBarra =
         obtenerColoresBarra();
 
+    const diasTrabajados =
+        Object.values(ingresos).filter(
+            (ingreso) =>
+                Number(ingreso.netoTotal) > 0
+        ).length;
+
+    const obtenerDiasObligatorios = () => {
+        const diasLaborales =
+            Number(
+                user?.diaslaborales || 0
+            );
+
+        // Semana
+        if (
+            viewType ===
+            VIEW_TYPES.WEEK
+        ) {
+            return diasLaborales;
+        }
+
+        // Quincena
+        if (
+            viewType ===
+            VIEW_TYPES.FORTNIGHT
+        ) {
+            return Math.round(
+                diasLaborales * 2
+            );
+        }
+
+        // Mes
+        if (
+            viewType ===
+            VIEW_TYPES.MONTH
+        ) {
+            const diasDelMes =
+                days.filter(Boolean)
+                    .length;
+
+            return Math.round(
+                (diasLaborales / 7) *
+                diasDelMes
+            );
+        }
+
+        return diasLaborales;
+    };
+
+    const diasObligatorios =
+        obtenerDiasObligatorios();
+
+    const diasFaltantes =
+        Math.max(
+            diasObligatorios -
+            diasTrabajados,
+            0
+        );
+
+    const diasExtra =
+        Math.max(
+            diasTrabajados -
+            diasObligatorios,
+            0
+        );
+
+    const porcentajeDias =
+        diasObligatorios > 0
+            ? Math.min(
+                (diasTrabajados /
+                    diasObligatorios) *
+                100,
+                100
+            )
+            : 0;
+
+    const diasCumplidos =
+        diasTrabajados >=
+        diasObligatorios;
+
+
+    const obtenerMensajeDias = () => {
+        const periodo =
+            nombrePeriodo[viewType];
+
+        if (diasCumplidos) {
+            if (diasExtra > 0) {
+                return `¡Excelente! En esta ${periodo} trabajaste ${diasExtra} día${diasExtra > 1
+                    ? "s"
+                    : ""
+                    } adicional${diasExtra > 1
+                        ? "es"
+                        : ""
+                    } a tu objetivo.`;
+            }
+
+            return `¡Excelente! Cumpliste tu objetivo de días laborados para esta ${periodo}.`;
+        }
+
+        if (periodoFinalizado) {
+            return `En esta ${periodo} te faltó trabajar ${diasFaltantes} día${diasFaltantes > 1
+                ? "s"
+                : ""
+                } para cumplir tu objetivo.`;
+        }
+
+        return `Has trabajado ${diasTrabajados} de ${diasObligatorios} días planeados para esta ${periodo}.`;
+    };
+
+    const obtenerColoresDias = () => {
+        if (diasCumplidos) {
+            return {
+                progreso: "#4CAF50",
+                fondo: "#E8F5E9",
+            };
+        }
+
+        if (periodoFinalizado) {
+            return {
+                progreso: "#f44336",
+                fondo: "#fe96a1",
+            };
+        }
+
+        return {
+            progreso: "#2d79f3",
+            fondo: "#E3F2FD",
+        };
+    };
+
+    const coloresDias =
+        obtenerColoresDias();
+
+
+    /**estadistica 3 */
+
+
+    const metaSemanal =
+        Number(user?.meta || 0);
+
+    const diasLaborales =
+        Number(
+            user?.diaslaborales || 1
+        );
+
+    const dineroRestanteSemana =
+        Math.max(
+            metaSemanal -
+            totalPeriodo,
+            0
+        );
+
+    let diaSemana =
+        new Date().getDay();
+
+    if (diaSemana === 0) {
+        diaSemana = 7;
+    }
+
+    const diasRestantes =
+        Math.max(
+            diasLaborales -
+            (diaSemana - 1),
+            1
+        );
+
+    const metaDiariaActual =
+        dineroRestanteSemana /
+        diasRestantes;
+
+    const fechaHoy =
+        formatearFechaFirestore(
+            new Date()
+        );
+
+    const dineroHoy =
+        ingresos[fechaHoy]
+            ?.netoTotal || 0;
+
+    const porcentajeDiario =
+        metaDiariaActual > 0
+            ? Math.min(
+                (dineroHoy /
+                    metaDiariaActual) *
+                100,
+                100
+            )
+            : 100;
+
+    const objetivoDiarioCumplido =
+        dineroHoy >=
+        metaDiariaActual;
+
+    const dineroFaltanteHoy = Math?.max(
+        metaDiariaActual - dineroHoy,
+        0
+    );
+
+    const dineroExtraHoy = Math?.max(
+        dineroHoy - metaDiariaActual,
+        0
+    );
+
+    const obtenerMensajeDiario =
+        () => {
+            if (
+                totalPeriodo >=
+                metaSemanal
+            ) {
+                return `¡Excelente! Ya cumpliste tu meta semanal.`;
+            }
+
+            if (objetivoDiarioCumplido) {
+                if (dineroExtraHoy > 0) {
+                    return `¡Excelente! Cumpliste tu objetivo de hoy y además generaste $${formatearNumero(
+                        Math.round(dineroExtraHoy)
+                    )} extra para alcanzar tu meta semanal.`;
+                }
+
+                return `¡Excelente! Cumpliste tu objetivo de hoy.`;
+            }
+
+            if (dineroHoy === 0) {
+                return `Necesitas generar $${formatearNumero(
+                    Math.round(metaDiariaActual)
+                )} hoy para alcanzar tu meta semanal.`;
+            }
+
+            return `Te faltan $${formatearNumero(
+                Math.round(dineroFaltanteHoy)
+            )} para completar tu objetivo de hoy y alcanzar tu meta semanal.`;
+
+
+        };
+
+    const obtenerColoresDiario =
+        () => {
+            if (
+                totalPeriodo >=
+                metaSemanal
+            ) {
+                return {
+                    progreso:
+                        "#4CAF50",
+                    fondo:
+                        "#E8F5E9",
+                };
+            }
+
+            if (
+                objetivoDiarioCumplido
+            ) {
+                return {
+                    progreso:
+                        "#4CAF50",
+                    fondo:
+                        "#E8F5E9",
+                };
+            }
+
+            return {
+                progreso:
+                    "#2d79f3",
+                fondo:
+                    "#E3F2FD",
+            };
+        };
+
+    const coloresDiario =
+        obtenerColoresDiario();
+
+    const mostrarObjetivoDiario =
+        viewType ===
+        VIEW_TYPES.WEEK &&
+        !periodoFinalizado;
+
     return (
-        <div className="meta-container">
-            <div className="meta-title">
-                <h3>Estadísticas</h3>
-            </div>
+        <div className="statistics-card">
+            <div className="meta-container">
+                <div className="meta-title">
+                    <h3>Estadísticas <MdOutlineQueryStats /></h3>
+                </div>
 
-            <div className="meta-porcentaje">
-                {obtenerMensajeMeta()}
-            </div>
+                <div className="meta-porcentaje">
+                    {obtenerMensajeMeta()}
+                </div>
 
-            <div
-                className="meta-barra"
-                style={{
-                    backgroundColor:
-                        coloresBarra.fondo,
-                }}
-            >
                 <div
-                    className="meta-barra-progreso"
+                    className="meta-barra"
                     style={{
-                        width: `${Math.min(
-                            porcentaje,
-                            100
-                        )}%`,
                         backgroundColor:
-                            coloresBarra.progreso,
+                            coloresBarra.fondo,
                     }}
-                />
+                >
+                    <div
+                        className="meta-barra-progreso"
+                        style={{
+                            width: `${Math.min(
+                                porcentaje,
+                                100
+                            )}%`,
+                            backgroundColor:
+                                coloresBarra.progreso,
+                        }}
+                    />
+                </div>
+
+                <div className="meta-valores">
+                    $
+                    {formatearNumero(
+                        totalPeriodo
+                    )}
+                    {" / "}
+                    $
+                    {formatearNumero(
+                        metaPeriodo
+                    )}
+                </div>
             </div>
 
-            <div className="meta-valores">
-                $
-                {formatearNumero(
-                    totalPeriodo
-                )}
-                {" / "}
-                $
-                {formatearNumero(
-                    metaPeriodo
-                )}
+            <div className="meta-container">
+                <div className="meta-subtitle">
+                    <h3>Días laborados</h3>
+                </div>
+
+                <div className="meta-porcentaje">
+                    {obtenerMensajeDias()}
+                </div>
+
+                <div
+                    className="meta-barra"
+                    style={{
+                        backgroundColor:
+                            coloresDias.fondo,
+                    }}
+                >
+                    <div
+                        className="meta-barra-progreso"
+                        style={{
+                            width: `${porcentajeDias}%`,
+                            backgroundColor:
+                                coloresDias.progreso,
+                        }}
+                    />
+                </div>
+
+                <div className="meta-valores">
+                    {diasTrabajados}
+                    {" / "}
+                    {diasObligatorios}
+                    {" días"}
+                </div>
             </div>
+
+            {
+                mostrarObjetivoDiario && (
+                    <div className="meta-container">
+                        <div className="meta-title-gold">
+                            <h3>
+                                Objetivo diario
+                                {objetivoDiarioCumplido && (
+                                    <LiaMedalSolid
+                                        className="medalla-icon"
+                                    />
+                                )}
+                            </h3>
+                        </div>
+
+                        <div className="meta-porcentaje">
+                            {obtenerMensajeDiario()}
+                        </div>
+
+                        <div
+                            className="meta-barra"
+                            style={{
+                                backgroundColor:
+                                    coloresDiario.fondo,
+                            }}
+                        >
+                            <div
+                                className="meta-barra-progreso"
+                                style={{
+                                    width: `${porcentajeDiario}%`,
+                                    backgroundColor:
+                                        coloresDiario.progreso,
+                                }}
+                            />
+                        </div>
+
+                        <div className="meta-valores">
+                            $
+                            {formatearNumero(
+                                dineroHoy
+                            )}
+                            {" / "}
+                            $
+                            {formatearNumero(
+                                Math.round(
+                                    metaDiariaActual
+                                )
+                            )}
+                        </div>
+                    </div>
+                )
+            }
+
         </div>
     );
 }
