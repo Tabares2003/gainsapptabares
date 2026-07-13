@@ -16,12 +16,147 @@ import FormControl from "@material-ui/core/FormControl";
 import {
     Select,
     MenuItem,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    TextField,
+    DialogActions,
+    Button,
 } from "@material-ui/core";
+
+import {
+    getFirestore,
+    doc,
+    setDoc,
+    serverTimestamp,
+    collection,
+    getDocs,
+    query,
+    where,
+    documentId,
+} from "firebase/firestore";
 
 const auth = getAuth(firebaseApp);
 
 
 function UserView({ user }) {
+
+    const db = getFirestore();
+
+    const [currentDate, setCurrentDate] = useState(
+        new Date()
+    );
+
+    const VIEW_TYPES = {
+        MONTH: "month",
+        WEEK: "week",
+        FORTNIGHT: "fortnight",
+    };
+
+    const [viewType, setViewType] = useState(
+        VIEW_TYPES.MONTH
+    );
+
+    const formatearFechaFirestore = (fecha) => {
+        const year = fecha.getFullYear();
+
+        const month = String(
+            fecha.getMonth() + 1
+        ).padStart(2, "0");
+
+        const day = String(
+            fecha.getDate()
+        ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
+
+
+    const [ingresos, setIngresos] = useState({});
+
+    const obtenerIngresos = async () => {
+        try {
+            const validDays =
+                days.filter(Boolean);
+
+            if (!validDays.length) {
+                return;
+            }
+
+            const fechaInicio =
+                obtenerFechaId(
+                    validDays[0]
+                );
+
+            const fechaFin =
+                obtenerFechaId(
+                    validDays[
+                    validDays.length - 1
+                    ]
+                );
+
+            const q = query(
+                collection(
+                    db,
+                    "usuarios",
+                    user.uid,
+                    "ingresos"
+                ),
+                where(
+                    documentId(),
+                    ">=",
+                    fechaInicio
+                ),
+                where(
+                    documentId(),
+                    "<=",
+                    fechaFin
+                )
+            );
+
+            const snapshot =
+                await getDocs(q);
+
+            const datos = {};
+
+            snapshot.forEach((doc) => {
+                datos[doc.id] =
+                    doc.data();
+            });
+
+            setIngresos(datos);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    useEffect(() => {
+        if (!user?.uid) {
+            return;
+        }
+
+        obtenerIngresos();
+    }, [
+        user?.uid,
+        currentDate,
+        viewType,
+    ]);
+
+    const obtenerFechaId = (fecha) => {
+        const year = fecha.getFullYear();
+
+        const month = String(
+            fecha.getMonth() + 1
+        ).padStart(2, "0");
+
+        const day = String(
+            fecha.getDate()
+        ).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
+
 
     const isToday = (date) => {
         if (!date) return false;
@@ -35,19 +170,9 @@ function UserView({ user }) {
         );
     };
 
-    const VIEW_TYPES = {
-        MONTH: "month",
-        WEEK: "week",
-        FORTNIGHT: "fortnight",
-    };
 
-    const [viewType, setViewType] = useState(
-        VIEW_TYPES.MONTH
-    );
 
-    const [currentDate, setCurrentDate] = useState(
-        new Date()
-    );
+
 
 
     const maxDate = new Date();
@@ -168,12 +293,10 @@ function UserView({ user }) {
 
         const calendar = [];
 
-        // Espacios vacíos al inicio
         for (let i = 0; i < startDay; i++) {
             calendar.push(null);
         }
 
-        // Días del mes
         for (let day = 1; day <= daysInMonth; day++) {
             calendar.push(
                 new Date(year, month, day)
@@ -363,6 +486,107 @@ function UserView({ user }) {
 
     const classes = useStyles();
 
+    const abrirIngresoDialog = (day) => {
+        if (!day) {
+            return;
+        }
+
+        const fechaId =
+            formatearFechaFirestore(day);
+
+        const ingreso =
+            ingresos[fechaId];
+
+        setSelectedDate(day);
+
+        if (ingreso) {
+            setBrutoTotal(
+                ingreso.brutoTotal
+            );
+
+            setNetoTotal(
+                ingreso.netoTotal
+            );
+        } else {
+            setBrutoTotal("");
+            setNetoTotal("");
+        }
+
+        setOpenIngresoDialog(true);
+    };
+
+    const [openIngresoDialog, setOpenIngresoDialog] =
+        useState(false);
+
+    const [selectedDate, setSelectedDate] =
+        useState(null);
+
+    const [brutoTotal, setBrutoTotal] =
+        useState("");
+
+    const [netoTotal, setNetoTotal] =
+        useState("");
+
+
+    
+
+    const guardarIngresoDia = async () => {
+        try {
+            if (!selectedDate) {
+                return;
+            }
+
+            const fechaId =
+                formatearFechaFirestore(
+                    selectedDate
+                );
+
+            const data = {
+                fecha: fechaId,
+
+                brutoTotal:
+                    Number(brutoTotal) || 0,
+
+                netoTotal:
+                    Number(netoTotal) || 0,
+
+                updatedAt:
+                    serverTimestamp(),
+            };
+
+            const ingresoActual =
+                ingresos[fechaId];
+
+            if (!ingresoActual) {
+                data.createdAt =
+                    serverTimestamp();
+            }
+
+            await setDoc(
+                doc(
+                    db,
+                    "usuarios",
+                    user.uid,
+                    "ingresos",
+                    fechaId
+                ),
+                data,
+                {
+                    merge: true,
+                }
+            );
+
+            await obtenerIngresos();
+
+            setOpenIngresoDialog(false);
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
+
     return (
         <div className="user-view-container">
             {!user.meta ? (
@@ -438,22 +662,54 @@ function UserView({ user }) {
                                     )
                                 )}
 
-                                {days.map((day, index) => (
-                                    <div
-                                        key={index}
-                                        className="calendar-day"
-                                    >
-                                        {day && (
-                                            <span
-                                                className={`day-number ${isToday(day) ? "today-number" : ""
-                                                    }`}
-                                            >
-                                                {day.getDate()}
-                                            </span>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+                                {days.map((day, index) => {
+
+                                    const fechaId =
+                                        day &&
+                                        obtenerFechaId(day);
+
+                                    const ingresoDia =
+                                        fechaId &&
+                                        ingresos[fechaId];
+
+                                    return (
+                                        <div
+                                            key={index}
+                                            className="calendar-day"
+                                            onClick={() => abrirIngresoDialog(day)}
+                                        >
+                                            {day && (
+                                                <>
+                                                    <span
+                                                        className={`day-number ${isToday(day)
+                                                            ? "today-number"
+                                                            : ""
+                                                            }`}
+                                                    >
+                                                        {day.getDate()}
+                                                    </span>
+
+                                                    {ingresoDia && (
+                                                        <div className="calendar-income">
+                                                            <p>
+                                                                Br:
+                                                                $
+                                                                {ingresoDia.brutoTotal.toLocaleString()}
+                                                            </p>
+
+                                                            <p>
+                                                                Nt:
+                                                                $
+                                                                {ingresoDia.netoTotal.toLocaleString()}
+                                                            </p>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div> 
                         </div>
 
 
@@ -502,6 +758,73 @@ function UserView({ user }) {
 
                 </div>
             )}
+
+            <Dialog
+                open={openIngresoDialog}
+                onClose={() =>
+                    setOpenIngresoDialog(false)
+                }
+                fullWidth
+                maxWidth="xs"
+            >
+                <DialogTitle>
+                    {selectedDate?.toLocaleDateString(
+                        "es-CO"
+                    )}
+                </DialogTitle>
+
+                <DialogContent>
+
+                    <TextField
+                        label="Ingreso bruto"
+                        fullWidth
+                        margin="normal"
+                        value={brutoTotal}
+                        onChange={(e) =>
+                            setBrutoTotal(
+                                e.target.value
+                            )
+                        }
+                        type="number"
+                    />
+
+                    <TextField
+                        label="Ingreso neto"
+                        fullWidth
+                        margin="normal"
+                        value={netoTotal}
+                        onChange={(e) =>
+                            setNetoTotal(
+                                e.target.value
+                            )
+                        }
+                        type="number"
+                    />
+
+                </DialogContent>
+
+                <DialogActions>
+
+                    <Button
+                        onClick={() =>
+                            setOpenIngresoDialog(false)
+                        }
+                    >
+                        Cancelar
+                    </Button>
+
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={
+                            guardarIngresoDia
+                        }
+                    >
+                        Guardar
+                    </Button>
+
+                </DialogActions>
+            </Dialog>
 
 
         </div>
