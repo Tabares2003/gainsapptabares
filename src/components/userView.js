@@ -44,8 +44,86 @@ const VIEW_TYPES = {
     FORTNIGHT: "fortnight",
 };
 
+const formatearNumero = (valor) => {
+    if (!valor) return "";
+
+    return valor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 
 function UserView({ user }) {
+
+    const getWeekDays = (date) => {
+        const current = new Date(date);
+
+        let day = current.getDay();
+
+        // Si es domingo (0), lo convertimos en 7
+        if (day === 0) {
+            day = 7;
+        }
+
+        // Retroceder hasta el lunes
+        current.setDate(
+            current.getDate() - day + 1
+        );
+
+        const week = [];
+
+        for (let i = 0; i < 7; i++) {
+            week.push(
+                new Date(
+                    current.getFullYear(),
+                    current.getMonth(),
+                    current.getDate() + i
+                )
+            );
+        }
+
+        return week;
+    };
+
+    const getFortnightDays = (date) => {
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const day = date.getDate();
+
+        const days = [];
+
+        let startDay;
+        let endDay;
+
+        // Primera quincena
+        if (day <= 15) {
+            startDay = 1;
+            endDay = 15;
+        }
+        // Segunda quincena
+        else {
+            startDay = 16;
+            endDay = new Date(
+                year,
+                month + 1,
+                0
+            ).getDate();
+        }
+
+        for (
+            let d = startDay;
+            d <= endDay;
+            d++
+        ) {
+            days.push(
+                new Date(
+                    year,
+                    month,
+                    d
+                )
+            );
+        }
+
+        return days;
+    };
 
     const db = getFirestore();
 
@@ -247,77 +325,7 @@ function UserView({ user }) {
     });
 
 
-    const getWeekDays = (date) => {
-        const current = new Date(date);
 
-        let day = current.getDay();
-
-        // Si es domingo (0), lo convertimos en 7
-        if (day === 0) {
-            day = 7;
-        }
-
-        // Retroceder hasta el lunes
-        current.setDate(
-            current.getDate() - day + 1
-        );
-
-        const week = [];
-
-        for (let i = 0; i < 7; i++) {
-            week.push(
-                new Date(
-                    current.getFullYear(),
-                    current.getMonth(),
-                    current.getDate() + i
-                )
-            );
-        }
-
-        return week;
-    };
-
-    const getFortnightDays = (date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const day = date.getDate();
-
-        const days = [];
-
-        let startDay;
-        let endDay;
-
-        // Primera quincena
-        if (day <= 15) {
-            startDay = 1;
-            endDay = 15;
-        }
-        // Segunda quincena
-        else {
-            startDay = 16;
-            endDay = new Date(
-                year,
-                month + 1,
-                0
-            ).getDate();
-        }
-
-        for (
-            let d = startDay;
-            d <= endDay;
-            d++
-        ) {
-            days.push(
-                new Date(
-                    year,
-                    month,
-                    d
-                )
-            );
-        }
-
-        return days;
-    };
 
 
 
@@ -590,6 +598,66 @@ function UserView({ user }) {
         }
     };
 
+    const totalPeriodo = Object.values(
+        ingresos
+    ).reduce(
+        (total, ingreso) =>
+            total +
+            (ingreso.netoTotal || 0),
+        0
+    );
+
+    const obtenerMetaPeriodo = () => {
+        const metaSemanal =
+            Number(user?.meta || 0);
+
+        if (
+            viewType ===
+            VIEW_TYPES.WEEK
+        ) {
+            return metaSemanal;
+        }
+
+        if (
+            viewType ===
+            VIEW_TYPES.FORTNIGHT
+        ) {
+            return metaSemanal * 2;
+        }
+
+        if (
+            viewType ===
+            VIEW_TYPES.MONTH
+        ) {
+            const semanas =
+                Math.ceil(
+                    days.filter(Boolean)
+                        .length / 7
+                );
+
+            return (
+                metaSemanal *
+                semanas
+            );
+        }
+
+        return metaSemanal;
+    };
+
+ 
+    const metaPeriodo =
+        obtenerMetaPeriodo();
+
+    const porcentaje =
+        metaPeriodo > 0
+            ? Math.min(
+                (totalPeriodo /
+                    metaPeriodo) *
+                100,
+                100
+            )
+            : 0;
+
 
 
     return (
@@ -696,12 +764,12 @@ function UserView({ user }) {
 
                                                     {ingresoDia && (
                                                         <div className="calendar-income">
-                                                            <h4> 
-                                                                ${ingresoDia.brutoTotal.toLocaleString()}
+                                                            <h4>
+                                                                ${ingresoDia.netoTotal.toLocaleString()}
                                                             </h4>
 
-                                                            <p> 
-                                                                {ingresoDia.netoTotal.toLocaleString()}
+                                                            <p>
+                                                                {ingresoDia.brutoTotal.toLocaleString()}
                                                             </p>
                                                         </div>
                                                     )}
@@ -714,7 +782,32 @@ function UserView({ user }) {
                         </div>
 
 
+                        <div className="meta-container">
+                            <div className="meta-title">
+                                <h3>Estadisticas</h3>
+                            </div>
 
+                            <div className="meta-porcentaje">
+                                LLevas un total de {porcentaje.toFixed(0)} %completado
+                            </div>
+
+                            <div className="meta-barra">
+                                <div
+                                    className="meta-barra-progreso"
+                                    style={{
+                                        width: `${porcentaje}%`,
+                                    }}
+                                />
+                            </div>
+
+                            <div className="meta-valores">
+                                $
+                                {formatearNumero(totalPeriodo)}
+                                {" / "}
+                                $
+                                {formatearNumero(metaPeriodo)}
+                            </div>
+                        </div>
 
 
                         <div
