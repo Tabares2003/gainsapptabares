@@ -1,4 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import firebaseApp from '../firebase/credenciales';
+import { getAuth, signOut } from "firebase/auth";
+
 
 import {
   getFirestore,
@@ -11,10 +14,12 @@ import {
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, MenuItem, Select, Table, TableBody, TableCell, TableHead, TableRow, TextField } from '@material-ui/core';
 import { FaEdit } from "react-icons/fa";
 import { MdDeleteOutline, MdOutlineAddCircleOutline } from 'react-icons/md';
+import { FaRegUser } from 'react-icons/fa6';
 
 
 function AdminView() {
 
+  const auth = getAuth(firebaseApp);
 
   const db = getFirestore();
 
@@ -117,7 +122,9 @@ function AdminView() {
 
   return (
     <div>
-      Hola, Admin
+      Hola, Admin <button onClick={() => signOut(auth)}>
+        <FaRegUser />
+      </button>
 
 
       <div className="tabla-dias-demanda">

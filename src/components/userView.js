@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import firebaseApp from '../firebase/credenciales';
 import { getAuth, signOut } from "firebase/auth";
 import RegisterData from '../components/registerData';
@@ -18,26 +18,24 @@ import FormControl from "@material-ui/core/FormControl";
 import {
     Select,
     MenuItem,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    TextField,
-    DialogActions,
-    Button,
+    Dialog
 } from "@material-ui/core";
 
 import {
-    getFirestore,
-    doc,
-    setDoc,
-    serverTimestamp,
-    collection,
+    getFirestore, collection,
     getDocs,
     query,
     where,
     documentId,
+    addDoc,
+    serverTimestamp,
+    doc,
+    deleteDoc,
+    updateDoc,
+    setDoc,
 } from "firebase/firestore";
 import StatisticsCard from "./homeComponents/StatisticsCard";
+import IngresoDialogContent from "./homeComponents/IngresoDialogContent";
 
 const auth = getAuth(firebaseApp);
 
@@ -318,7 +316,7 @@ function UserView({ user }) {
                 borderWidth: 2,
             },
         },
-    });  
+    });
 
     const next = () => {
         const date = new Date(currentDate);
@@ -485,10 +483,45 @@ function UserView({ user }) {
 
     const classes = useStyles();
 
-    const abrirIngresoDialog = (day) => {
-        if (!day) {
-            return;
-        }
+    const [movimientos, setMovimientos] =
+        useState([]);
+
+
+    const obtenerMovimientos =
+        async (fechaId) => {
+            try {
+                const snapshot =
+                    await getDocs(
+                        collection(
+                            db,
+                            "usuarios",
+                            user.uid,
+                            "ingresos",
+                            fechaId,
+                            "movimientos"
+                        )
+                    );
+
+                const datos = [];
+
+                snapshot.forEach((doc) => {
+                    datos.push({
+                        id: doc.id,
+                        ...doc.data(),
+                    });
+                });
+
+                setMovimientos(datos);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+
+    const abrirIngresoDialog = async (
+        day
+    ) => {
+        if (!day) return;
 
         const fechaId =
             formatearFechaFirestore(day);
@@ -507,9 +540,13 @@ function UserView({ user }) {
                 ingreso.netoTotal
             );
         } else {
-            setBrutoTotal("");
-            setNetoTotal("");
+            setBrutoTotal(0);
+            setNetoTotal(0);
         }
+
+        await obtenerMovimientos(
+            fechaId
+        );
 
         setOpenIngresoDialog(true);
     };
@@ -526,42 +563,150 @@ function UserView({ user }) {
     const [netoTotal, setNetoTotal] =
         useState("");
 
+    const [nuevoBruto,
+        setNuevoBruto] =
+        useState("");
+
+    const [nuevoNeto,
+        setNuevoNeto] =
+        useState("");
 
 
+    const agregarMovimiento =
+        async () => {
+            try {
+                if (
+                    !selectedDate
+                ) {
+                    return;
+                }
 
-    const guardarIngresoDia = async () => {
-        try {
-            if (!selectedDate) {
-                return;
+                const fechaId =
+                    formatearFechaFirestore(
+                        selectedDate
+                    );
+
+                const bruto =
+                    Number(
+                        nuevoBruto
+                    ) || 0;
+
+                const neto =
+                    Number(
+                        nuevoNeto
+                    ) || 0;
+
+                await addDoc(
+                    collection(
+                        db,
+                        "usuarios",
+                        user.uid,
+                        "ingresos",
+                        fechaId,
+                        "movimientos"
+                    ),
+                    {
+                        bruto,
+                        neto,
+                        createdAt:
+                            serverTimestamp(),
+                    }
+                );
+
+                const nuevoBrutoTotal =
+                    Number(
+                        brutoTotal
+                    ) + bruto;
+
+                const nuevoNetoTotal =
+                    Number(
+                        netoTotal
+                    ) + neto;
+
+                await setDoc(
+                    doc(
+                        db,
+                        "usuarios",
+                        user.uid,
+                        "ingresos",
+                        fechaId
+                    ),
+                    {
+                        fecha:
+                            fechaId,
+
+                        brutoTotal:
+                            nuevoBrutoTotal,
+
+                        netoTotal:
+                            nuevoNetoTotal,
+
+                        updatedAt:
+                            serverTimestamp(),
+                    },
+                    {
+                        merge: true,
+                    }
+                );
+
+                setBrutoTotal(
+                    nuevoBrutoTotal
+                );
+
+                setNetoTotal(
+                    nuevoNetoTotal
+                );
+
+                setNuevoBruto("");
+                setNuevoNeto("");
+
+                await obtenerMovimientos(
+                    fechaId
+                );
+
+                await obtenerIngresos();
+            } catch (error) {
+                console.log(error);
             }
+        };
 
+
+    const eliminarMovimiento = async (
+        movimiento
+    ) => {
+        try {
             const fechaId =
                 formatearFechaFirestore(
                     selectedDate
                 );
 
-            const data = {
-                fecha: fechaId,
+            await deleteDoc(
+                doc(
+                    db,
+                    "usuarios",
+                    user.uid,
+                    "ingresos",
+                    fechaId,
+                    "movimientos",
+                    movimiento.id
+                )
+            );
 
-                brutoTotal:
-                    Number(brutoTotal) || 0,
+            const nuevoBruto =
+                Math.max(
+                    brutoTotal -
+                    movimiento.bruto,
+                    0
+                );
 
-                netoTotal:
-                    Number(netoTotal) || 0,
+            const nuevoNeto =
+                Math.max(
+                    netoTotal -
+                    movimiento.neto,
+                    0
+                );
 
-                updatedAt:
-                    serverTimestamp(),
-            };
-
-            const ingresoActual =
-                ingresos[fechaId];
-
-            if (!ingresoActual) {
-                data.createdAt =
-                    serverTimestamp();
-            }
-
-            await setDoc(
+            await updateDoc(
                 doc(
                     db,
                     "usuarios",
@@ -569,15 +714,18 @@ function UserView({ user }) {
                     "ingresos",
                     fechaId
                 ),
-                data,
                 {
-                    merge: true,
+                    brutoTotal:
+                        nuevoBruto,
+                    netoTotal:
+                        nuevoNeto,
+                    updatedAt:
+                        serverTimestamp(),
                 }
             );
 
+            await obtenerMovimientos();
             await obtenerIngresos();
-
-            setOpenIngresoDialog(false);
 
         } catch (error) {
             console.log(error);
@@ -902,63 +1050,27 @@ function UserView({ user }) {
                 fullWidth
                 maxWidth="xs"
             >
-                <DialogTitle>
-                    {selectedDate?.toLocaleDateString(
-                        "es-CO"
-                    )}
-                </DialogTitle>
-
-                <DialogContent>
-
-                    <TextField
-                        label="Ingreso bruto"
-                        fullWidth
-                        margin="normal"
-                        value={brutoTotal}
-                        onChange={(e) =>
-                            setBrutoTotal(
-                                e.target.value
-                            )
-                        }
-                        type="number"
-                    />
-
-                    <TextField
-                        label="Ingresos totales"
-                        fullWidth
-                        margin="normal"
-                        value={netoTotal}
-                        onChange={(e) =>
-                            setNetoTotal(
-                                e.target.value
-                            )
-                        }
-                        type="number"
-                    />
-
-                </DialogContent>
-
-                <DialogActions>
-
-                    <Button
-                        onClick={() =>
-                            setOpenIngresoDialog(false)
-                        }
-                    >
-                        Cancelar
-                    </Button>
-
-                    <Button
-                        color="primary"
-                        variant="contained"
-                        onClick={
-                            guardarIngresoDia
-                        }
-                    >
-                        Guardar
-                    </Button>
-
-                </DialogActions>
+                <IngresoDialogContent
+                    selectedDate={selectedDate}
+                    brutoTotal={brutoTotal}
+                    setBrutoTotal={setBrutoTotal}
+                    netoTotal={netoTotal}
+                    setNetoTotal={setNetoTotal}
+                    setOpenIngresoDialog={
+                        setOpenIngresoDialog
+                    }
+                    ingresos={ingresos}
+                    db={db}
+                    user={user}
+                    obtenerIngresos={obtenerIngresos}
+                    nuevoBruto={nuevoBruto}
+                    setNuevoBruto={setNuevoBruto}
+                    nuevoNeto={nuevoNeto}
+                    setNuevoNeto={setNuevoNeto}
+                    agregarMovimiento={agregarMovimiento}
+                    movimientos={movimientos}
+                    eliminarMovimiento={eliminarMovimiento}
+                />
             </Dialog>
 
 
